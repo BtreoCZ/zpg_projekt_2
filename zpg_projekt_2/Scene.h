@@ -2,17 +2,19 @@
 
 #include <vector>
 #include "DrawableObject.h"
-
+#include "Camera.h"
 using namespace std;
 
 class Scene
 {
 public:
     std::vector<DrawableObject> objects;
-
-    void Init(const vector<DrawableObject>& drawableObjects);
+    Camera* camera;
+    void Init(const vector<DrawableObject>& drawableObjects,Camera* camera);
 
     void Render();
 
     void AddObject(DrawableObject object);
+
+    Camera* GetCamera() const;
 };

@@ -7,6 +7,8 @@ float deltaTime = 0.0f;
 float lastFrame = 0.0f;  
 Camera* camera = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 Camera* camera2 = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
+
+
 void Application::Init()
 {
 
@@ -46,6 +48,9 @@ void Application::Init()
 	glfwGetFramebufferSize(this->window, &width, &height);
 	float ratio = width / (float)height;
 	glViewport(0, 0, width, height);
+
+
+	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	// Sets the key callback
 	glfwSetKeyCallback(this->window, key_callback);
@@ -125,7 +130,7 @@ void Application::Init()
 	for (int i = 0; i < 20; i++) {
 		DrawableObject treeObject(tree, sizeof(tree), GL_TRIANGLES, vertexShader, fragmentShader, true);
 		treeObject.SetScale(glm::vec3(rand() % 100 / 1000.0 + 0.05f));
-		treeObject.SetPosition(glm::vec3(rand() % 20 - 8, rand() % 10 - 5, 0.0f));
+		treeObject.SetPosition(glm::vec3(rand() % 20 - 8, rand() % 10 - 5, (float)i));
 
 		float randomAngleY = rand() % 45;
 		float randomAngleX = rand() % 45;
@@ -146,7 +151,7 @@ void Application::Init()
 	}
 
 	Scene scene1;
-	scene1.Init(objects);
+	scene1.Init(objects,camera);
 
 	AddScene(scene1);
 
@@ -166,7 +171,7 @@ void Application::Init()
 		camera->Attach(&object.shaderProgram);
 	}
 	Scene scene2;
-	scene2.Init(objects2);
+	scene2.Init(objects2,camera2);
 
 	AddScene(scene2);
 
@@ -317,7 +322,23 @@ void Application::window_size_callback(GLFWwindow* window, int width, int height
 
 void Application::cursor_callback(GLFWwindow* window, double x, double y)
 {
-	printf("cursor_callback \n");
+	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+
+	Camera* camera = app->scenes[app->currentSceneIndex].GetCamera();
+
+	static double lastX = 400, lastY = 300;
+
+	double offsetX = x - lastX;
+	double offsetY = lastY - y;
+
+	lastX = x;
+	lastY = y;
+
+	float sensitivity = 0.1f;
+	offsetX *= sensitivity;
+	offsetY *= sensitivity;
+
+	camera->Rotate(offsetX, offsetY);
 }
 
 void Application::button_callback(GLFWwindow* window, int button, int action, int mode)

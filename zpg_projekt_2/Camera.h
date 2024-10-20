@@ -27,6 +27,9 @@ public:
 
     void ProcessKeyboardInput(int direction, float deltaTime);
 
+    void Rotate(float deltaX, float deltaY);
+
+    void UpdateViewMatrix();
 
     void Attach(ShaderProgram* shaderProgram);
 
@@ -40,8 +43,12 @@ private:
     glm::vec3 right;   
     glm::vec3 worldUp; 
 
+    float yaw;
+    float pitch;
+
     float movementSpeed;
     glm::mat4 projectionMatrix;
+    glm::mat4 viewMatrix;
 
     std::vector<ShaderProgram*> observers;
 

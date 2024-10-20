@@ -31,7 +31,7 @@ public:
 	vector<ShaderProgram> shaders;
 	vector<Model> models;
 
-	std::vector<Scene> scenes;
+	vector<Scene> scenes;
 	int currentSceneIndex;
 
 public:

@@ -18,7 +18,7 @@ Camera::Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float movemen
 
 glm::mat4 Camera::GetViewMatrix() const
 {
-    return glm::lookAt(position, target, glm::vec3(0.0f, 1.0f, 0.0f));
+    return viewMatrix; //glm::lookAt(position, target, glm::vec3(0.0f, 1.0f, 0.0f));
 }
 
 glm::mat4 Camera::GetProjectionMatrix() const
@@ -53,13 +53,34 @@ void Camera::ProcessKeyboardInput(int direction, float deltaTime)
 {
     float velocity = movementSpeed * deltaTime;
     if (direction == FORWARD)
-        position += front * velocity;
+        position += target * velocity;
     if (direction == BACKWARD)
-        position -= front * velocity;
+        position -= target * velocity;
     if (direction == LEFT)
         position -= right * velocity;
     if (direction == RIGHT)
         position += right * velocity;
+
+    UpdateViewMatrix();
+    Notify();
+}
+
+void Camera::Rotate(float deltaX, float deltaY)
+{
+    yaw += deltaX;
+    pitch += deltaY;
+
+    if (pitch > 89.0f) pitch = 89.0f;
+    if (pitch < -89.0f) pitch = -89.0f;
+
+
+    glm::vec3 direction;
+
+    direction.x = cos(glm::radians(yaw)) * cos(glm::radians(pitch));
+    direction.y = sin(glm::radians(pitch));
+    direction.z = sin(glm::radians(yaw)) * cos(glm::radians(pitch));
+
+    target = glm::normalize(direction);
 
     Notify();
 }
@@ -70,6 +91,12 @@ void Camera::UpdateCameraVectors()
     right = glm::normalize(glm::cross(front, worldUp));
     up = glm::normalize(glm::cross(right, front));
 }
+
+void Camera::UpdateViewMatrix()
+{
+    viewMatrix = glm::lookAt(position, target, up);
+}
+
 
 void Camera::Notify() const
 {
