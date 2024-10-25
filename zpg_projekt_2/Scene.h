@@ -10,11 +10,13 @@ class Scene
 public:
     std::vector<DrawableObject> objects;
     Camera* camera;
-    void Init(const vector<DrawableObject>& drawableObjects,Camera* camera);
+
+    Scene(vector<DrawableObject>& drawableObjects, Camera* camera);
+    void Init(vector<DrawableObject>& drawableObjects,Camera* camera);
 
     void Render();
 
     void AddObject(DrawableObject object);
 
-    Camera* GetCamera() const;
+    Camera* GetCamera();
 };

@@ -13,9 +13,13 @@
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
 #include <stdio.h>
+#include "Camera.h"
+#include "Observer.h"
+
+class Camera;
 
 
-class ShaderProgram
+class ShaderProgram : Observer
 {
 private:
 	GLuint shader_id;
@@ -24,7 +28,7 @@ private:
 	GLint first;
 	GLsizei count;
 
-
+	Camera* camera;
 
 public:
 	glm::mat4 Matrix;
@@ -32,8 +36,7 @@ public:
 	glm::mat4 projectionMatrix;
 
 
-	ShaderProgram(GLenum mode, GLint first, GLsizei count);
-	ShaderProgram(GLenum mode, GLint first, GLsizei count, glm::mat4 Matrix);
+	ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera);
 
 	void AddShaders(const char* vertex_shader, const char* fragment_shader);
 
@@ -45,5 +48,6 @@ public:
 
 	void UseProgram();
 
+	void Update() override;
 	void Draw();
 };

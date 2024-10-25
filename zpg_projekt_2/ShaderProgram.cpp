@@ -1,12 +1,16 @@
 #include "ShaderProgram.h"
 
-ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count)
+ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera)
 {
 	this->shader_id = 0;
 
 	this->mode = mode;
 	this->first = first;
 	this->count = count;
+
+	this->camera = camera;
+
+	camera->Attach(this);
 
 }
 
@@ -23,18 +27,6 @@ void ShaderProgram::UpdateViewAndProjection(const glm::mat4& viewMatrix, const g
 	glUniformMatrix4fv(projectionMatrixLocation, 1, GL_FALSE, &projectionMatrix[0][0]);
 }
 
-
-ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count, glm::mat4 Matrix)
-{
-	this->shader_id = 0;
-
-	this->mode = mode;
-	this->first = first;
-	this->count = count;
-
-
-	this->Matrix = Matrix;
-}
 
 void ShaderProgram::AddShaders(const char* vertex_shader, const char* fragment_shader)
 {
@@ -61,7 +53,15 @@ void ShaderProgram::AddShaders(const char* vertex_shader, const char* fragment_s
 
 void ShaderProgram::SetMatrix(glm::mat4 Matrix)
 {
-	this->Matrix = Matrix;
+	GLint idModelTransform = glGetUniformLocation(this->shader_id, "modelMatrix");
+
+	if (idModelTransform == -1) {
+		printf("Error: Cannot find uniform 'modelMatrix' in shader!\n");
+	}
+
+	glUseProgram(this->shader_id);
+
+	glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &Matrix[0][0]);
 }
 
 
@@ -90,15 +90,15 @@ void ShaderProgram::CheckProgramLinking(GLuint program)
 
 void ShaderProgram::UseProgram()
 {
-	GLint idModelTransform = glGetUniformLocation(this->shader_id, "modelMatrix");
-
-	if (idModelTransform == -1) {
-		printf("Error: Cannot find uniform 'modelMatrix' in shader!\n");
-	}
 
 	glUseProgram(this->shader_id);
 
-	glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &this->Matrix[0][0]);
+}
+
+void ShaderProgram::Update()
+{
+	this->UseProgram();
+	this->UpdateViewAndProjection(this->camera->GetViewMatrix(), this->camera->GetProjectionMatrix());
 }
 
 void ShaderProgram::Draw()

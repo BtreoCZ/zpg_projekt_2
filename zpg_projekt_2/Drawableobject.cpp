@@ -1,17 +1,17 @@
 #include "DrawableObject.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal)
-    : transformation(),
-    shaderProgram(drawMode, 0, withNormal == true ? vertexSize / sizeof(float) / 6 : vertexSize / sizeof(float) / 3)
+DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal,Camera *camera)
+    : transformation()
 {
+    this->shaderProgram = new ShaderProgram(drawMode, 0, withNormal == true ? vertexSize / sizeof(float) / 6 : vertexSize / sizeof(float) / 3, camera);
 
     if (withNormal)
         model.GenerateModel(vertices, vertexSize);
     else
         model.GenerateModelWithoutNormals(vertices, vertexSize);
 
-    shaderProgram.AddShaders(vertexShader, fragmentShader);
+    shaderProgram->AddShaders(vertexShader, fragmentShader);
 }
 
 
@@ -35,13 +35,15 @@ void DrawableObject::SetScale(glm::vec3 scale)
 
 void DrawableObject::Draw()
 {
-    shaderProgram.UseProgram();
 
-    shaderProgram.SetMatrix(transformation.GetMatrix());
+    
+    shaderProgram->UseProgram();
+
+    shaderProgram->SetMatrix(transformation.GetMatrix());
 
     model.BindVAO();
 
-    shaderProgram.Draw();
+    shaderProgram->Draw();
 
     model.UnbindVAO();
 }

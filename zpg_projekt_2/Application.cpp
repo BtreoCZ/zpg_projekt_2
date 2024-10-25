@@ -1,16 +1,16 @@
 #include "Application.h"
+#include "plain.h"
 
 vector<DrawableObject> objects;
 vector<DrawableObject> objects2;
 
 float deltaTime = 0.0f;  
 float lastFrame = 0.0f;  
-Camera* camera = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
-Camera* camera2 = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
-
 
 void Application::Init()
 {
+	Camera* camera = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
+	Camera* camera2 = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit()) {
@@ -122,22 +122,23 @@ void Application::Init()
 
 
 	camera->SetProjection(60.0f,ratio, 0.1f, 100.0f);
+	camera2->SetProjection(60.0f, ratio, 0.1f, 100.0f);
 
 	srand(time(NULL));
 	;
 
 
 	for (int i = 0; i < 20; i++) {
-		DrawableObject treeObject(tree, sizeof(tree), GL_TRIANGLES, vertexShader, fragmentShader, true);
+		DrawableObject treeObject(tree, sizeof(tree), GL_TRIANGLES, vertexShader, fragmentShader, true,camera);
 		treeObject.SetScale(glm::vec3(rand() % 100 / 1000.0 + 0.05f));
-		treeObject.SetPosition(glm::vec3(rand() % 20 - 8, rand() % 10 - 5, (float)i));
+		treeObject.SetPosition(glm::vec3(rand() % 20 - 8, 0.0f, rand()%50));
 
 		float randomAngleY = rand() % 45;
 		float randomAngleX = rand() % 45;
 
-		treeObject.SetRotation(glm::vec3(randomAngleX, randomAngleY, 0));
+		//treeObject.SetRotation(glm::vec3(randomAngleX, randomAngleY, 0));
 
-		DrawableObject bushObject(bushes, sizeof(bushes), GL_TRIANGLES, vertexShader, fragmentShader, true);
+		DrawableObject bushObject(bushes, sizeof(bushes), GL_TRIANGLES, vertexShader, fragmentShader, true, camera);
 		bushObject.SetScale(glm::vec3(rand() % 100 / 500.0 + 0.05f));
 		bushObject.SetPosition(glm::vec3(rand() % 8 - 5, rand() % 8 - 5, 0.0f));
 
@@ -145,33 +146,27 @@ void Application::Init()
 		objects.push_back(bushObject);
 	}
 
-	for (auto& object : objects)
-	{
-		camera->Attach(&object.shaderProgram);
-	}
+	DrawableObject plainObject(plain, sizeof(plain), GL_TRIANGLES, vertexShader, fragmentShader, true, camera);
+	plainObject.SetScale(glm::vec3(10.0f));
+	plainObject.SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	Scene scene1;
-	scene1.Init(objects,camera);
+	objects.push_back(plainObject);
 
+	Scene *scene1= new Scene(objects, camera);
 	AddScene(scene1);
 
-	DrawableObject kulicka(sphere, sizeof(sphere), GL_TRIANGLES, vertexShader, fragmentShader, true);
+	DrawableObject kulicka(sphere, sizeof(sphere), GL_TRIANGLES, vertexShader, fragmentShader, true, camera2);
 	kulicka.SetScale(glm::vec3(0.5f));
 
 	objects2.push_back(kulicka);
 
-	DrawableObject obdelnik(quad, sizeof(quad), GL_QUADS, vertexShader, fragment_shader_quad, false);
+	DrawableObject obdelnik(quad, sizeof(quad), GL_QUADS, vertexShader, fragment_shader_quad, false, camera2);
 	obdelnik.SetScale(glm::vec3(0.5f));
 	obdelnik.SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
 
 	objects2.push_back(obdelnik);
 
-	for (auto& object : objects2)
-	{
-		camera->Attach(&object.shaderProgram);
-	}
-	Scene scene2;
-	scene2.Init(objects2,camera2);
+	Scene *scene2 = new Scene(objects2, camera2);
 
 	AddScene(scene2);
 
@@ -179,7 +174,7 @@ void Application::Init()
 
 }
 
-void Application::AddScene(Scene scene)
+void Application::AddScene(Scene *scene)
 {
 	scenes.push_back(scene);
 }
@@ -195,7 +190,7 @@ void Application::MoveObject(int direction)
 {
 	printf("MoveObject %d\n", direction);
 
-	for (auto& object : scenes[currentSceneIndex].objects)
+	for (auto& object : scenes[currentSceneIndex]->objects)
 	{
 		if (direction == 0) {
 			object.SetPosition(glm::vec3(-0.1f, 0.0f, 0.0f));
@@ -215,7 +210,7 @@ void Application::MoveObject(int direction)
 void Application::RotateObject(int axis)
 {
 
-	for (auto& object : scenes[currentSceneIndex].objects)
+	for (auto& object : scenes[currentSceneIndex]->objects)
 	{
 		if (axis == 0) {
 			object.SetRotation(glm::vec3(0.0f, 0.0f, 10.0f));
@@ -237,7 +232,7 @@ void Application::Run()
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
 
-		scenes[currentSceneIndex].Render();
+		scenes[currentSceneIndex]->Render();
 
 
 		glfwSwapBuffers(this->window);
@@ -261,7 +256,8 @@ void Application::error_callback(int error, const char* description)
 
 void Application::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
 {
-
+	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
 	if (action == GLFW_PRESS || action == GLFW_REPEAT)
 	{
 		if (key == GLFW_KEY_LEFT) {
@@ -294,6 +290,12 @@ void Application::key_callback(GLFWwindow* window, int key, int scancode, int ac
 	deltaTime = currentFrame - lastFrame;
 	lastFrame = currentFrame;
 
+	const float maxDeltaTime = 0.01f;
+
+	if (deltaTime > maxDeltaTime) {
+		deltaTime = maxDeltaTime;
+	}
+
 	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
 		camera->ProcessKeyboardInput(FORWARD, deltaTime);
 	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
@@ -324,7 +326,7 @@ void Application::cursor_callback(GLFWwindow* window, double x, double y)
 {
 	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
 
-	Camera* camera = app->scenes[app->currentSceneIndex].GetCamera();
+	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
 
 	static double lastX = 400, lastY = 300;
 

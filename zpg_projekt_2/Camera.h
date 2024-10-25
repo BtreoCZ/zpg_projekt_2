@@ -2,6 +2,10 @@
 #include <glm/glm.hpp>
 #include <vector>
 #include "ShaderProgram.h"
+#include "Subject.h"
+#include "Observer.h"
+
+class ShaderProgram;
 
 enum Camera_Movement {
     FORWARD,
@@ -11,37 +15,35 @@ enum Camera_Movement {
 };
 
 
-class Camera
+class Camera : Subject
 {
 public:
     Camera(glm::vec3 position, glm::vec3 target, glm::vec3 up, float movementSpeed);
     Camera();
 
 
-    glm::mat4 GetViewMatrix() const;
-    glm::mat4 GetProjectionMatrix() const;
+    glm::mat4 GetViewMatrix();
+    glm::mat4 GetProjectionMatrix();
 
-    void SetPosition(const glm::vec3& position);
-    void SetTarget(const glm::vec3& target);
+    void SetPosition(glm::vec3& position);
+    void SetTarget(glm::vec3& target);
     void SetProjection(float fov, float aspectRatio, float nearClip, float farClip);
 
     void ProcessKeyboardInput(int direction, float deltaTime);
 
     void Rotate(float deltaX, float deltaY);
 
-    void UpdateViewMatrix();
+    void Attach(Observer* shaderProgram) override;
 
-    void Attach(ShaderProgram* shaderProgram);
+    void Detach(Observer* shaderProgram) override;
 
-    void Notify() const;
+    void Notify() override;
 
 private:
     glm::vec3 position;
     glm::vec3 target;
-    glm::vec3 front;   
     glm::vec3 up;      
     glm::vec3 right;   
-    glm::vec3 worldUp; 
 
     float yaw;
     float pitch;
@@ -50,7 +52,7 @@ private:
     glm::mat4 projectionMatrix;
     glm::mat4 viewMatrix;
 
-    std::vector<ShaderProgram*> observers;
+    std::vector<Observer*> observers;
 
 
     void UpdateCameraVectors();

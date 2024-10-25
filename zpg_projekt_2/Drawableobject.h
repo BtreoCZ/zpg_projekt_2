@@ -10,11 +10,11 @@ public:
     Model model;
     Transformation transformation;
 
-    ShaderProgram shaderProgram;
+    ShaderProgram *shaderProgram;
 
     bool hasNormal;
 
-    DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal);
+    DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal,Camera *camera);
 
     void SetPosition(glm::vec3 position);
     void SetRotation(glm::vec3 rotationDegrees);
