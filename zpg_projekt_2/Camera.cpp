@@ -44,6 +44,11 @@ void Camera::SetProjection(float fov, float aspectRatio, float nearClip, float f
     Notify();
 }
 
+glm::vec3 Camera::GetPosition()
+{
+    return this->position;
+}
+
 void Camera::Attach(Observer* shaderProgram)
 {
     observers.push_back(shaderProgram);
@@ -103,7 +108,7 @@ void Camera::Notify()
     {
         if (observer)  
         {
-            observer->Update();
+            observer->Update(this);
         }
     }
 }

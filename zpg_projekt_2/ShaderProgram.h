@@ -15,6 +15,8 @@
 #include <stdio.h>
 #include "Camera.h"
 #include "Observer.h"
+#include "ShaderLoader.h"
+#include "Light.h"
 
 class Camera;
 
@@ -27,8 +29,10 @@ private:
 	GLenum mode;
 	GLint first;
 	GLsizei count;
-
+	ShaderLoader shaderLoader;
 	Camera* camera;
+	Light* light;
+
 
 public:
 	glm::mat4 Matrix;
@@ -36,7 +40,8 @@ public:
 	glm::mat4 projectionMatrix;
 
 
-	ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera);
+	ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera, Light* light);
+
 
 	void AddShaders(const char* vertex_shader, const char* fragment_shader);
 
@@ -46,8 +51,17 @@ public:
 
 	void CheckProgramLinking(GLuint program);
 
+	void SetMat4Uniform(const char* uniformName, glm::mat4 matrix);
+
+	void SetMat3Uniform(const char* uniformName, glm::mat3 matrix);
+
+	void SetVec3Uniform(const char* uniformName, glm::vec3 vector);
+
+	void SetFloatUniform(const char* uniformName, float value);
+
 	void UseProgram();
 
-	void Update() override;
+	void Update(Subject* subject) override;
+
 	void Draw();
 };

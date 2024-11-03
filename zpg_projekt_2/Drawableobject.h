@@ -3,6 +3,13 @@
 #include "Model.h"
 #include "Transformation.h"
 #include "ShaderProgram.h"
+#include "Rotate.h"
+#include "Translate.h"
+#include "Scale.h"
+#include "Camera.h"
+#include "Light.h"
+
+class Transformation;
 
 class DrawableObject
 {
@@ -14,8 +21,8 @@ public:
 
     bool hasNormal;
 
-    DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal,Camera *camera);
-
+    DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal,Camera *camera,Light* light);
+    DrawableObject(Model* model, ShaderProgram* shaderProgram);
     void SetPosition(glm::vec3 position);
     void SetRotation(glm::vec3 rotationDegrees);
     void SetScale(glm::vec3 scale);

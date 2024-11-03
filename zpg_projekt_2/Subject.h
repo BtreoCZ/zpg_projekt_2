@@ -1,5 +1,6 @@
 #pragma once
 #include "Observer.h"
+class Observer;
 class Subject
 {
 	void virtual Notify() = 0;

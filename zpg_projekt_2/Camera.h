@@ -29,6 +29,8 @@ public:
     void SetTarget(glm::vec3& target);
     void SetProjection(float fov, float aspectRatio, float nearClip, float farClip);
 
+    glm::vec3 GetPosition();
+
     void ProcessKeyboardInput(int direction, float deltaTime);
 
     void Rotate(float deltaX, float deltaY);

@@ -1,17 +1,23 @@
 #include "ShaderProgram.h"
 
-ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera)
+ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera,Light* light)
 {
 	this->shader_id = 0;
 
 	this->mode = mode;
 	this->first = first;
 	this->count = count;
-
+	
+	this->shaderLoader = ShaderLoader();
 	this->camera = camera;
 
 	camera->Attach(this);
 
+	this->light = light;
+	light->Attach(this);
+
+	camera->Notify();
+	light->Notify();
 }
 
 void ShaderProgram::UpdateViewAndProjection(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
@@ -31,24 +37,26 @@ void ShaderProgram::UpdateViewAndProjection(const glm::mat4& viewMatrix, const g
 void ShaderProgram::AddShaders(const char* vertex_shader, const char* fragment_shader)
 {
 
-	GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-	glShaderSource(vertexShader, 1, &vertex_shader, NULL);
-	glCompileShader(vertexShader);
+	this->shaderLoader = ShaderLoader(vertex_shader,fragment_shader,&this->shader_id);
 
-	GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-	glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
-	glCompileShader(fragmentShader);
+	//GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
+	//glShaderSource(vertexShader, 1, &vertex_shader, NULL);
+	//glCompileShader(vertexShader);
 
-	this->shader_id = glCreateProgram();
+	//GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
+	//glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
+	//glCompileShader(fragmentShader);
 
-	glAttachShader(this->shader_id, vertexShader);
-	glAttachShader(this->shader_id, fragmentShader);
-	glLinkProgram(this->shader_id);
+	//this->shader_id = glCreateProgram();
 
-	CheckProgramLinking(this->shader_id);
+	//glAttachShader(this->shader_id, vertexShader);
+	//glAttachShader(this->shader_id, fragmentShader);
+	//glLinkProgram(this->shader_id);
 
-	glDeleteShader(vertexShader);
-	glDeleteShader(fragmentShader);
+	//CheckProgramLinking(this->shader_id);
+
+	//glDeleteShader(vertexShader);
+	//glDeleteShader(fragmentShader);
 }
 
 void ShaderProgram::SetMatrix(glm::mat4 Matrix)
@@ -87,7 +95,49 @@ void ShaderProgram::CheckProgramLinking(GLuint program)
 	}
 
 }
+void ShaderProgram::SetMat4Uniform(const char* uniformName, glm::mat4 matrix)
+{
+	GLint idModelTransform = glGetUniformLocation(this->shader_id, uniformName);
 
+	if (idModelTransform == -1) {
+		return;
+	}
+
+	glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &matrix[0][0]);
+}
+
+void ShaderProgram::SetMat3Uniform(const char* uniformName, glm::mat3 matrix)
+{
+	GLint idModelTransform = glGetUniformLocation(this->shader_id, uniformName);
+
+	if (idModelTransform == -1) {
+		return;
+	}
+
+	glUniformMatrix3fv(idModelTransform, 1, GL_FALSE, &matrix[0][0]);
+}
+
+void ShaderProgram::SetVec3Uniform(const char* uniformName, glm::vec3 vector)
+{
+	GLint idModelTransform = glGetUniformLocation(this->shader_id, uniformName);
+
+	if (idModelTransform == -1) {
+		return;
+	}
+
+	glUniform3fv(idModelTransform, 1, glm::value_ptr(vector));
+}
+
+void ShaderProgram::SetFloatUniform(const char* uniformName, float value)
+{
+	GLint idModelTransform = glGetUniformLocation(this->shader_id, uniformName);
+
+	if (idModelTransform == -1) {
+		return;
+	}
+
+	glUniform1f(idModelTransform, value);
+}
 void ShaderProgram::UseProgram()
 {
 
@@ -95,10 +145,24 @@ void ShaderProgram::UseProgram()
 
 }
 
-void ShaderProgram::Update()
+void ShaderProgram::Update(Subject* subject)
 {
 	this->UseProgram();
-	this->UpdateViewAndProjection(this->camera->GetViewMatrix(), this->camera->GetProjectionMatrix());
+	
+	if (typeid(*subject)==typeid(Camera))
+	{
+		this->SetMat4Uniform("viewMatrix", this->camera->GetViewMatrix());
+		this->SetMat4Uniform("projectionMatrix", this->camera->GetProjectionMatrix());
+		SetVec3Uniform("viewPosition", camera->GetPosition());
+	}
+	else if (typeid(*subject) == typeid(Light))
+	{
+		this->SetVec3Uniform("lightPosition", this->light->GetPosition());
+		this->SetVec3Uniform("lightColor", this->light->GetColor());
+		this->SetVec3Uniform("objectColor", this->light->GetObjectColor());
+		this->SetFloatUniform("ambientStrength", this->light->GetAmbientStrenght());
+		this->SetFloatUniform("lightIntensity", this->light->GetIntensity());
+	}
 }
 
 void ShaderProgram::Draw()

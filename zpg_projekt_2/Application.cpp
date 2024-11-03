@@ -1,16 +1,22 @@
 #include "Application.h"
 #include "plain.h"
 
-vector<DrawableObject> objects;
-vector<DrawableObject> objects2;
+
 
 float deltaTime = 0.0f;  
 float lastFrame = 0.0f;  
 
 void Application::Init()
 {
-	Camera* camera = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
-	Camera* camera2 = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
+	vector<DrawableObject*> objects_forest;
+	vector<DrawableObject*> objects_spheres;
+	vector<DrawableObject*> objects_triangle;
+	vector<DrawableObject*> objects_shaders;
+
+	Camera* camera_forest = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
+	Camera* camera_spheres = new Camera(glm::vec3(0.0f, 0.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 10.0f);
+	Camera* camera_base = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
+	Camera* camera_shaders = new Camera(glm::vec3(0.0f, 0.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 
 	glfwSetErrorCallback(error_callback);
 	if (!glfwInit()) {
@@ -66,6 +72,24 @@ void Application::Init()
 
 	glfwSetWindowSizeCallback(this->window, window_size_callback);
 
+	const char* vertexShader_light =
+		"#version 330 core\n"
+		"layout(location = 0) in vec3 aPos;\n"
+		"layout(location = 1) in vec3 aNormal;\n"
+
+		"out vec4 ex_worldPosition\n"
+		"out vec3 ex_worldNormal"
+		"uniform mat4 modelMatrix;\n"
+		"uniform mat4 viewMatrix;\n"
+		"uniform mat4 projectionMatrix;\n"
+		"uniform mat3 normalMatrix;\n"
+		"void main() {\n"
+		"    gl_Position =  projectionMatrix * viewMatrix * modelMatrix * vec4(aPos, 1.0);\n"
+		"    ourColor = aColor;\n"
+		"    ex_worldPosition = modelMatrix * vec4(aPos,1.0f);\n"
+		"    ex_worldNormal = normalMatrix * in_Normal;\n"
+		"}\n";
+
 	const char* vertexShader =
 		"#version 330 core\n"
 		"layout(location = 0) in vec3 aPos;\n"
@@ -80,6 +104,14 @@ void Application::Init()
 		"}\n";
 
 	const char* fragmentShader =
+		"#version 330 core\n"
+		"in vec3 ourColor;\n"
+		"out vec4 fragColor;\n"
+		"void main() {\n"
+		"    fragColor = vec4(ourColor, 1.0);\n"
+		"}\n";
+
+	const char* fragmentShader_light =
 		"#version 330 core\n"
 		"in vec3 ourColor;\n"
 		"out vec4 fragColor;\n"
@@ -120,55 +152,140 @@ void Application::Init()
 	};
 
 
+	//Nastavení kamer
+	camera_forest->SetProjection(60.0f,ratio, 0.1f, 100.0f);
+	camera_spheres->SetProjection(60.0f, ratio, 0.1f, 100.0f);
+	camera_base->SetProjection(60.0f, ratio, 0.1f, 100.0f);
+	camera_shaders->SetProjection(60.0f, ratio, 0.1f, 100.0f);
 
-	camera->SetProjection(60.0f,ratio, 0.1f, 100.0f);
-	camera2->SetProjection(60.0f, ratio, 0.1f, 100.0f);
+	camera_spheres->Rotate(-90.0f, 0.0f);
+	camera_shaders->Rotate(-90.0f, 0.0f);
+
+	const float triangle[] = {
+	0.0f, 0.0f, 0.0f,
+	1.0f, 0.0f, 0.0f,
+	0.5f, 1.0f, 0.0f
+	};
+	Light* light = new Light(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 1.0f, 0.2f);
+
+	Light* light_spheres = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 1.0f, 0.2f);
+
 
 	srand(time(NULL));
 	;
 
 
-	for (int i = 0; i < 20; i++) {
-		DrawableObject treeObject(tree, sizeof(tree), GL_TRIANGLES, vertexShader, fragmentShader, true,camera);
-		treeObject.SetScale(glm::vec3(rand() % 100 / 1000.0 + 0.05f));
-		treeObject.SetPosition(glm::vec3(rand() % 20 - 8, 0.0f, rand()%50));
+	//Vytvoøení sceny pro trojuhelnik
+	DrawableObject* triangle_object = new DrawableObject(triangle, sizeof(triangle), GL_TRIANGLES, "vertex.txt", "fragment.txt", false, camera_base, light);
+
+	objects_triangle.push_back(triangle_object);
+	light->Notify();
+	Scene* scene_triangle = new Scene(objects_triangle, camera_base);
+
+	AddScene(scene_triangle);
+	//Vytvoøeni sceny pro stromy a keøe
+	Model* tree_model = new Model();
+	tree_model->GenerateModel(tree, sizeof(tree));
+
+	Model* bush_model = new Model();
+	bush_model->GenerateModel(bushes, sizeof(bushes));
+
+	ShaderProgram* shader_tree= new ShaderProgram(GL_TRIANGLES, 0, sizeof(tree) / sizeof(float) / 6, camera_forest, light);
+	shader_tree->AddShaders("vertex.txt", "phong.txt");
+	ShaderProgram* shader_bush = new ShaderProgram(GL_TRIANGLES, 0, sizeof(bushes) / sizeof(float) / 6, camera_forest, light);
+	shader_bush->AddShaders("vertex.txt", "phong.txt");
+	for (int i = 0; i < 50; i++) {
+		DrawableObject* treeObject = new DrawableObject(tree_model,shader_tree);
+		treeObject->SetScale(glm::vec3(rand() % 100 / 1000.0 + 0.05f));
+		treeObject->SetPosition(glm::vec3(rand() % 20 - 8, 0.0f, rand()%50));
 
 		float randomAngleY = rand() % 45;
 		float randomAngleX = rand() % 45;
 
 		//treeObject.SetRotation(glm::vec3(randomAngleX, randomAngleY, 0));
 
-		DrawableObject bushObject(bushes, sizeof(bushes), GL_TRIANGLES, vertexShader, fragmentShader, true, camera);
-		bushObject.SetScale(glm::vec3(rand() % 100 / 500.0 + 0.05f));
-		bushObject.SetPosition(glm::vec3(rand() % 8 - 5, rand() % 8 - 5, 0.0f));
+		DrawableObject* bushObject = new DrawableObject(bush_model,shader_bush);
+		bushObject->SetScale(glm::vec3(rand() % 100 / 500.0 + 0.05f));
+		bushObject->SetPosition(glm::vec3(rand() % 20 - 8, 0.0f, rand() % 50));
 
-		objects.push_back(treeObject);
-		objects.push_back(bushObject);
+		objects_forest.push_back(treeObject);
+		objects_forest.push_back(bushObject);
 	}
 
-	DrawableObject plainObject(plain, sizeof(plain), GL_TRIANGLES, vertexShader, fragmentShader, true, camera);
-	plainObject.SetScale(glm::vec3(10.0f));
-	plainObject.SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	DrawableObject* plainObject= new DrawableObject(plain, sizeof(plain), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_forest, light);
+	plainObject->SetScale(glm::vec3(10.0f));
+	plainObject->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
-	objects.push_back(plainObject);
+	objects_forest.push_back(plainObject);
 
-	Scene *scene1= new Scene(objects, camera);
-	AddScene(scene1);
+	light->Notify();
 
-	DrawableObject kulicka(sphere, sizeof(sphere), GL_TRIANGLES, vertexShader, fragmentShader, true, camera2);
-	kulicka.SetScale(glm::vec3(0.5f));
+	Scene *scene_forest= new Scene(objects_forest, camera_forest);
+	AddScene(scene_forest);
 
-	objects2.push_back(kulicka);
+	//vytvoøení scény pro koule
+	DrawableObject* sphereObject = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_spheres, light_spheres);
+	sphereObject->SetScale(glm::vec3(0.5f));
+	sphereObject->SetPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
 
-	DrawableObject obdelnik(quad, sizeof(quad), GL_QUADS, vertexShader, fragment_shader_quad, false, camera2);
-	obdelnik.SetScale(glm::vec3(0.5f));
-	obdelnik.SetPosition(glm::vec3(1.0f, 0.0f, 0.0f));
 
-	objects2.push_back(obdelnik);
+	objects_spheres.push_back(sphereObject);
 
-	Scene *scene2 = new Scene(objects2, camera2);
+	DrawableObject* sphereObject2 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_spheres, light_spheres);
+	sphereObject2->SetScale(glm::vec3(0.5f));
+	sphereObject2->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
 
-	AddScene(scene2);
+	objects_spheres.push_back(sphereObject2);
+
+	DrawableObject* sphereObject3 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_spheres, light_spheres);
+	sphereObject3->SetScale(glm::vec3(0.5f));
+	sphereObject3->SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
+
+	objects_spheres.push_back(sphereObject3);
+
+	DrawableObject* sphereObject4 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_spheres, light_spheres);
+	sphereObject4->SetScale(glm::vec3(0.5f));
+	sphereObject4->SetPosition(glm::vec3(0.0f, -3.0f, 0.0f));
+
+	objects_spheres.push_back(sphereObject4);
+
+
+	light_spheres->Notify();
+
+	Scene *scene_spheres = new Scene(objects_spheres, camera_spheres);
+
+	AddScene(scene_spheres);
+
+	DrawableObject* giftObject = new DrawableObject(gift, sizeof(gift), GL_TRIANGLES, "vertex.txt", "fragment.txt", true, camera_shaders, light);
+	giftObject->SetScale(glm::vec3(0.5f));
+	giftObject->SetPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
+
+	objects_shaders.push_back(giftObject);
+
+	DrawableObject* suziObject = new DrawableObject(suziFlat, sizeof(suziFlat), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_shaders, light);
+	suziObject->SetScale(glm::vec3(0.5f));
+	suziObject->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+
+	objects_shaders.push_back(suziObject);
+
+	DrawableObject* treeObject = new DrawableObject(tree, sizeof(tree), GL_TRIANGLES, "vertex.txt", "blinn.txt", true, camera_shaders, light);
+	treeObject->SetScale(glm::vec3(0.5f));
+	treeObject->SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
+
+	objects_shaders.push_back(treeObject);
+
+	DrawableObject* sphereObjectShader = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "FragmentConstant.txt", true, camera_shaders, light);
+	sphereObjectShader->SetScale(glm::vec3(0.5f));
+	sphereObjectShader->SetPosition(glm::vec3(0.0f, -3.0f, 0.0f));
+
+	objects_shaders.push_back(sphereObjectShader);
+
+	light->Notify();
+
+	Scene *scene_shaders = new Scene(objects_shaders, camera_shaders);
+	AddScene(scene_shaders);
+
+
 
 	currentSceneIndex = 0;
 
@@ -193,16 +310,16 @@ void Application::MoveObject(int direction)
 	for (auto& object : scenes[currentSceneIndex]->objects)
 	{
 		if (direction == 0) {
-			object.SetPosition(glm::vec3(-0.1f, 0.0f, 0.0f));
+			object->SetPosition(glm::vec3(-0.1f, 0.0f, 0.0f));
 		}
 		else if (direction == 1) {
-			object.SetPosition(glm::vec3(0.1f, 0.0f, 0.0f));
+			object->SetPosition(glm::vec3(0.1f, 0.0f, 0.0f));
 		}
 		else if (direction == 2) {
-			object.SetPosition(glm::vec3(0.0f, 0.1f, 0.0f));
+			object->SetPosition(glm::vec3(0.0f, 0.1f, 0.0f));
 		}
 		else if (direction == 3) {
-			object.SetPosition(glm::vec3(0.0f, -0.1f, 0.0f));
+			object->SetPosition(glm::vec3(0.0f, -0.1f, 0.0f));
 		}
 	}
 }
@@ -213,10 +330,10 @@ void Application::RotateObject(int axis)
 	for (auto& object : scenes[currentSceneIndex]->objects)
 	{
 		if (axis == 0) {
-			object.SetRotation(glm::vec3(0.0f, 0.0f, 10.0f));
+			object->SetRotation(glm::vec3(0.0f, 0.0f, 10.0f));
 		}
 		else if (axis == 1) {
-			object.SetRotation(glm::vec3(0.0f, 10.0f, 0.0f));
+			object->SetRotation(glm::vec3(0.0f, 10.0f, 0.0f));
 		}
 	}
 }

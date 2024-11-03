@@ -1,29 +1,28 @@
 #include "Scene.h"
 
-Scene::Scene(vector<DrawableObject>& drawableObjects, Camera* camera)
+Scene::Scene(vector<DrawableObject*> drawableObjects, Camera* camera)
 {
     this->camera = camera;
     this->objects = drawableObjects;
+
+    camera->Notify();
 }
 
-void Scene::Init(std::vector<DrawableObject>& drawableObjects,Camera *camera)
+void Scene::Init(std::vector<DrawableObject*> drawableObjects,Camera *camera)
 {
     this->camera = camera;
-    for (const auto& object : drawableObjects)
-    {
-        this->objects.push_back(object);
-    }
+    this->objects = drawableObjects;
 }
 
 void Scene::Render()
 {
     for (auto& object : objects)
     {
-        object.Draw();
+        object->Draw();
     }
 }
 
-void Scene::AddObject(DrawableObject object)
+void Scene::AddObject(DrawableObject* object)
 {
     objects.push_back(object);
 }

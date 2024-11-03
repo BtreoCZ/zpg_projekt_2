@@ -21,6 +21,9 @@
 #include <random>
 #include "Scene.h"
 #include "Camera.h"
+#include "Light.h"
+#include "gift.h"
+#include "suzi_flat.h"
 using namespace std;
 
 class Application
