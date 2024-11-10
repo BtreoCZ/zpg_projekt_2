@@ -26,6 +26,14 @@ public:
     void SetPosition(glm::vec3 position);
     void SetRotation(glm::vec3 rotationDegrees);
     void SetScale(glm::vec3 scale);
+    void EnableDynamicRotation(float speed, const glm::vec3& axis);
+    void UpdateRotation(float deltaTime);
 
     void Draw();
+
+private:
+    bool isDynamicRotationEnabled = false;
+    float rotationSpeed = 0.0f;       
+    glm::vec3 rotationAxis;           
+    float currentRotationAngle = 0.0f; 
 };

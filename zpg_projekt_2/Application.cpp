@@ -1,10 +1,8 @@
 #include "Application.h"
 #include "plain.h"
 
-
-
-float deltaTime = 0.0f;  
-float lastFrame = 0.0f;  
+float deltaTime2 = 0;
+float lastFrame2 = 0;
 
 void Application::Init()
 {
@@ -18,7 +16,7 @@ void Application::Init()
 	Camera* camera_base = new Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 	Camera* camera_shaders = new Camera(glm::vec3(0.0f, 0.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 
-	glfwSetErrorCallback(error_callback);
+	glfwSetErrorCallback(Controller::error_callback);
 	if (!glfwInit()) {
 		fprintf(stderr, "ERROR: could not start GLFW3\n");
 		exit(EXIT_FAILURE);
@@ -59,18 +57,18 @@ void Application::Init()
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
 	//// Sets the key callback
-	glfwSetKeyCallback(this->window, key_callback);
+	glfwSetKeyCallback(this->window, Controller::key_callback);
 
-	glfwSetCursorPosCallback(this->window, cursor_callback);
+	glfwSetCursorPosCallback(this->window, Controller::cursor_callback);
 
-	glfwSetMouseButtonCallback(this->window, button_callback);
+	glfwSetMouseButtonCallback(this->window, Controller::button_callback);
 
 
-	glfwSetWindowFocusCallback(this->window, window_focus_callback);
+	glfwSetWindowFocusCallback(this->window, Controller::window_focus_callback);
 
-	glfwSetWindowIconifyCallback(this->window, window_iconify_callback);
+	glfwSetWindowIconifyCallback(this->window, Controller::window_iconify_callback);
 
-	glfwSetWindowSizeCallback(this->window, window_size_callback);
+	glfwSetWindowSizeCallback(this->window, Controller::window_size_callback);
 
 
 	const char* vertexShader_light =
@@ -168,15 +166,18 @@ void Application::Init()
 	1.0f, 0.0f, 0.0f,
 	0.5f, 1.0f, 0.0f
 	};
-	Light* light = new Light(glm::vec3(0.0f, 1.0f, 5.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
-	Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, -5.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
+	Light* light = new Light(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
+
+	Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
+
+	Light* light_forest2 = new Light(glm::vec3(0.0f, 1.0f, -3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
 
 	Light* light_spheres = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 1.0f, 0.2f);
 
 	vector<Light*> lights;
 	lights.push_back(light);
 	lights.push_back(light_forest);
-
+	lights.push_back(light_forest2);
 	vector<Light*> lights_spheres;
 	lights_spheres.push_back(light_spheres);
 
@@ -205,6 +206,9 @@ void Application::Init()
 	shader_bush->AddShaders("vertex.txt", "phong_lights.txt");
 	for (int i = 0; i < 50; i++) {
 		DrawableObject* treeObject = new DrawableObject(tree_model,shader_tree);
+		if(i%2){
+		treeObject->EnableDynamicRotation(20.0f, glm::vec3(0.0f, 1.0f, 0.0f));
+		}
 		treeObject->SetScale(glm::vec3(rand() % 100 / 1000.0 + 0.05f));
 		treeObject->SetPosition(glm::vec3(rand() % 20 - 8, 0.0f, rand()%50));
 
@@ -351,12 +355,17 @@ void Application::Run()
 {
 	glEnable(GL_DEPTH_TEST);
 
-
+	float currentFrame = glfwGetTime();
+	deltaTime2 = currentFrame - lastFrame2;
+	lastFrame2 = currentFrame;
 
 	while (!glfwWindowShouldClose(this->window))
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
 
+		for (auto& object : scenes[currentSceneIndex]->objects) {
+			object->UpdateRotation(deltaTime2);
+		}
 
 		scenes[currentSceneIndex]->Render();
 
@@ -375,113 +384,3 @@ void Application::Run()
 
 
 
-void Application::error_callback(int error, const char* description)
-{
-	fputs(description, stderr);
-}
-
-void Application::key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
-{
-	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
-	if (action == GLFW_PRESS || action == GLFW_REPEAT)
-	{
-		if (key == GLFW_KEY_LEFT) {
-			((Application*)glfwGetWindowUserPointer(window))->MoveObject(0);
-		}
-		else if (key == GLFW_KEY_RIGHT) {
-			((Application*)glfwGetWindowUserPointer(window))->MoveObject(1);
-		}
-		else if (key == GLFW_KEY_UP) {
-			((Application*)glfwGetWindowUserPointer(window))->MoveObject(2);
-		}
-		else if (key == GLFW_KEY_DOWN) {
-			((Application*)glfwGetWindowUserPointer(window))->MoveObject(3);
-		}
-		else if (key == GLFW_KEY_R) {
-			((Application*)glfwGetWindowUserPointer(window))->RotateObject(0);
-		}
-		else if (key == GLFW_KEY_T) {
-			((Application*)glfwGetWindowUserPointer(window))->RotateObject(1);
-		}
-		else if (key == GLFW_KEY_SPACE) {
-			((Application*)glfwGetWindowUserPointer(window))->SwitchScene();
-		}
-	}
-
-	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
-		glfwSetWindowShouldClose(window, GL_TRUE);
-
-	float currentFrame = glfwGetTime();
-	deltaTime = currentFrame - lastFrame;
-	lastFrame = currentFrame;
-
-	const float maxDeltaTime = 0.01f;
-
-	if (deltaTime > maxDeltaTime) {
-		deltaTime = maxDeltaTime;
-	}
-
-	if (glfwGetKey(window, GLFW_KEY_W) == GLFW_PRESS)
-		camera->ProcessKeyboardInput(FORWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_S) == GLFW_PRESS)
-		camera->ProcessKeyboardInput(BACKWARD, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_A) == GLFW_PRESS)
-		camera->ProcessKeyboardInput(LEFT, deltaTime);
-	if (glfwGetKey(window, GLFW_KEY_D) == GLFW_PRESS)
-		camera->ProcessKeyboardInput(RIGHT, deltaTime);
-}
-
-void Application::window_focus_callback(GLFWwindow* window, int focused)
-{
-	printf("window_focus_callback \n");
-}
-
-void Application::window_iconify_callback(GLFWwindow* window, int iconified)
-{
-	printf("window_iconify_callback \n");
-}
-
-void Application::window_size_callback(GLFWwindow* window, int width, int height)
-{
-	printf("resize %d, %d \n", width, height);
-	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-
-	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
-
-	camera->SetProjection(60.0f, width / (float)height, 0.1f, 100.0f);
-	
-	glViewport(0, 0, width, height);
-}
-
-void Application::cursor_callback(GLFWwindow* window, double x, double y)
-{
-	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
-
-	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
-
-	static double lastX = 400, lastY = 300;
-
-	double offsetX = x - lastX;
-	double offsetY = lastY - y;
-
-	lastX = x;
-	lastY = y;
-
-	float sensitivity = 0.1f;
-	offsetX *= sensitivity;
-	offsetY *= sensitivity;
-
-	camera->Rotate(offsetX, offsetY);
-}
-
-void Application::button_callback(GLFWwindow* window, int button, int action, int mode)
-{
-
-	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
-	{
-		Application* app = (Application*)glfwGetWindowUserPointer(window);
-		app->SwitchScene();
-	}
-
-}

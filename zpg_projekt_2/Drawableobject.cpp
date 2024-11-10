@@ -45,6 +45,22 @@ void DrawableObject::SetScale(glm::vec3 scale)
     transformation.AddComponent(new Scale(scale));
 }
 
+void DrawableObject::EnableDynamicRotation(float speed, const glm::vec3& axis)
+{
+    rotationSpeed = speed;
+    rotationAxis = axis;
+    isDynamicRotationEnabled = true;
+}
+
+void DrawableObject::UpdateRotation(float deltaTime)
+{
+    if (isDynamicRotationEnabled) {
+        currentRotationAngle = rotationSpeed * deltaTime;
+
+        SetRotation(rotationAxis * currentRotationAngle);
+    }
+}
+
 
 void DrawableObject::Draw()
 {
