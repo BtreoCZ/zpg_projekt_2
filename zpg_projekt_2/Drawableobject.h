@@ -21,7 +21,7 @@ public:
 
     bool hasNormal;
 
-    DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal,Camera *camera,Light* light);
+    DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal,Camera *camera,vector<Light*> lights);
     DrawableObject(Model* model, ShaderProgram* shaderProgram);
     void SetPosition(glm::vec3 position);
     void SetRotation(glm::vec3 rotationDegrees);

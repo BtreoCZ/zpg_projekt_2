@@ -13,9 +13,9 @@ void Application::Init()
 	vector<DrawableObject*> objects_triangle;
 	vector<DrawableObject*> objects_shaders;
 
-	Camera* camera_forest = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
+	Camera* camera_forest = new Camera(glm::vec3(0.0f, 1.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 	Camera* camera_spheres = new Camera(glm::vec3(0.0f, 0.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 10.0f);
-	Camera* camera_base = new Camera(glm::vec3(0.0f, 5.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
+	Camera* camera_base = new Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 	Camera* camera_shaders = new Camera(glm::vec3(0.0f, 0.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 
 	glfwSetErrorCallback(error_callback);
@@ -58,7 +58,7 @@ void Application::Init()
 
 	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 
-	// Sets the key callback
+	//// Sets the key callback
 	glfwSetKeyCallback(this->window, key_callback);
 
 	glfwSetCursorPosCallback(this->window, cursor_callback);
@@ -71,6 +71,7 @@ void Application::Init()
 	glfwSetWindowIconifyCallback(this->window, window_iconify_callback);
 
 	glfwSetWindowSizeCallback(this->window, window_size_callback);
+
 
 	const char* vertexShader_light =
 		"#version 330 core\n"
@@ -160,23 +161,31 @@ void Application::Init()
 
 	camera_spheres->Rotate(-90.0f, 0.0f);
 	camera_shaders->Rotate(-90.0f, 0.0f);
+	camera_base->Rotate(-90.0f, 0.0f);
 
 	const float triangle[] = {
 	0.0f, 0.0f, 0.0f,
 	1.0f, 0.0f, 0.0f,
 	0.5f, 1.0f, 0.0f
 	};
-	Light* light = new Light(glm::vec3(0.0f, 10.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 1.0f, 0.2f);
+	Light* light = new Light(glm::vec3(0.0f, 1.0f, 5.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
+	Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, -5.0f), glm::vec3(0.0f, 0.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
 
 	Light* light_spheres = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 1.0f, 0.2f);
 
+	vector<Light*> lights;
+	lights.push_back(light);
+	lights.push_back(light_forest);
+
+	vector<Light*> lights_spheres;
+	lights_spheres.push_back(light_spheres);
 
 	srand(time(NULL));
 	;
 
 
 	//Vytvoøení sceny pro trojuhelnik
-	DrawableObject* triangle_object = new DrawableObject(triangle, sizeof(triangle), GL_TRIANGLES, "vertex.txt", "fragment.txt", false, camera_base, light);
+	DrawableObject* triangle_object = new DrawableObject(triangle, sizeof(triangle), GL_TRIANGLES, "vertex.txt", "fragment.txt", false, camera_base, lights);
 
 	objects_triangle.push_back(triangle_object);
 	light->Notify();
@@ -190,10 +199,10 @@ void Application::Init()
 	Model* bush_model = new Model();
 	bush_model->GenerateModel(bushes, sizeof(bushes));
 
-	ShaderProgram* shader_tree= new ShaderProgram(GL_TRIANGLES, 0, sizeof(tree) / sizeof(float) / 6, camera_forest, light);
-	shader_tree->AddShaders("vertex.txt", "phong.txt");
-	ShaderProgram* shader_bush = new ShaderProgram(GL_TRIANGLES, 0, sizeof(bushes) / sizeof(float) / 6, camera_forest, light);
-	shader_bush->AddShaders("vertex.txt", "phong.txt");
+	ShaderProgram* shader_tree= new ShaderProgram(GL_TRIANGLES, 0, sizeof(tree) / sizeof(float) / 6, camera_forest, lights);
+	shader_tree->AddShaders("vertex.txt", "phong_lights.txt");
+	ShaderProgram* shader_bush = new ShaderProgram(GL_TRIANGLES, 0, sizeof(bushes) / sizeof(float) / 6, camera_forest, lights);
+	shader_bush->AddShaders("vertex.txt", "phong_lights.txt");
 	for (int i = 0; i < 50; i++) {
 		DrawableObject* treeObject = new DrawableObject(tree_model,shader_tree);
 		treeObject->SetScale(glm::vec3(rand() % 100 / 1000.0 + 0.05f));
@@ -212,7 +221,7 @@ void Application::Init()
 		objects_forest.push_back(bushObject);
 	}
 
-	DrawableObject* plainObject= new DrawableObject(plain, sizeof(plain), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_forest, light);
+	DrawableObject* plainObject= new DrawableObject(plain, sizeof(plain), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_forest, lights);
 	plainObject->SetScale(glm::vec3(10.0f));
 	plainObject->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 
@@ -224,26 +233,26 @@ void Application::Init()
 	AddScene(scene_forest);
 
 	//vytvoøení scény pro koule
-	DrawableObject* sphereObject = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_spheres, light_spheres);
+	DrawableObject* sphereObject = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject->SetScale(glm::vec3(0.5f));
 	sphereObject->SetPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
 
 
 	objects_spheres.push_back(sphereObject);
 
-	DrawableObject* sphereObject2 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_spheres, light_spheres);
+	DrawableObject* sphereObject2 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject2->SetScale(glm::vec3(0.5f));
 	sphereObject2->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
 
 	objects_spheres.push_back(sphereObject2);
 
-	DrawableObject* sphereObject3 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_spheres, light_spheres);
+	DrawableObject* sphereObject3 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject3->SetScale(glm::vec3(0.5f));
 	sphereObject3->SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
 
 	objects_spheres.push_back(sphereObject3);
 
-	DrawableObject* sphereObject4 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_spheres, light_spheres);
+	DrawableObject* sphereObject4 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject4->SetScale(glm::vec3(0.5f));
 	sphereObject4->SetPosition(glm::vec3(0.0f, -3.0f, 0.0f));
 
@@ -256,25 +265,25 @@ void Application::Init()
 
 	AddScene(scene_spheres);
 
-	DrawableObject* giftObject = new DrawableObject(gift, sizeof(gift), GL_TRIANGLES, "vertex.txt", "fragment.txt", true, camera_shaders, light);
+	DrawableObject* giftObject = new DrawableObject(gift, sizeof(gift), GL_TRIANGLES, "vertex.txt", "fragment.txt", true, camera_shaders, lights);
 	giftObject->SetScale(glm::vec3(0.5f));
 	giftObject->SetPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
 
 	objects_shaders.push_back(giftObject);
 
-	DrawableObject* suziObject = new DrawableObject(suziFlat, sizeof(suziFlat), GL_TRIANGLES, "vertex.txt", "phong.txt", true, camera_shaders, light);
+	DrawableObject* suziObject = new DrawableObject(suziFlat, sizeof(suziFlat), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_shaders, lights);
 	suziObject->SetScale(glm::vec3(0.5f));
 	suziObject->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
 
 	objects_shaders.push_back(suziObject);
 
-	DrawableObject* treeObject = new DrawableObject(tree, sizeof(tree), GL_TRIANGLES, "vertex.txt", "blinn.txt", true, camera_shaders, light);
+	DrawableObject* treeObject = new DrawableObject(tree, sizeof(tree), GL_TRIANGLES, "vertex.txt", "blinn.txt", true, camera_shaders, lights);
 	treeObject->SetScale(glm::vec3(0.5f));
 	treeObject->SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
 
 	objects_shaders.push_back(treeObject);
 
-	DrawableObject* sphereObjectShader = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "FragmentConstant.txt", true, camera_shaders, light);
+	DrawableObject* sphereObjectShader = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "FragmentConstant.txt", true, camera_shaders, lights);
 	sphereObjectShader->SetScale(glm::vec3(0.5f));
 	sphereObjectShader->SetPosition(glm::vec3(0.0f, -3.0f, 0.0f));
 
@@ -436,6 +445,12 @@ void Application::window_iconify_callback(GLFWwindow* window, int iconified)
 void Application::window_size_callback(GLFWwindow* window, int width, int height)
 {
 	printf("resize %d, %d \n", width, height);
+	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
+
+	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
+
+	camera->SetProjection(60.0f, width / (float)height, 0.1f, 100.0f);
+	
 	glViewport(0, 0, width, height);
 }
 

@@ -31,7 +31,7 @@ private:
 	GLsizei count;
 	ShaderLoader shaderLoader;
 	Camera* camera;
-	Light* light;
+	vector<Light*> lights;
 
 
 public:
@@ -40,7 +40,9 @@ public:
 	glm::mat4 projectionMatrix;
 
 
-	ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera, Light* light);
+	ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera, vector<Light*> lights);
+
+	void setLights(vector<Light*> lights);
 
 
 	void AddShaders(const char* vertex_shader, const char* fragment_shader);
@@ -56,6 +58,8 @@ public:
 	void SetMat3Uniform(const char* uniformName, glm::mat3 matrix);
 
 	void SetVec3Uniform(const char* uniformName, glm::vec3 vector);
+
+	void SetVec4Uniform(const char* uniformName, glm::vec4 vector);
 
 	void SetFloatUniform(const char* uniformName, float value);
 

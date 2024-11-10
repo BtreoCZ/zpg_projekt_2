@@ -1,9 +1,16 @@
 #include "DrawableObject.h"
 #include <glm/gtc/matrix_transform.hpp>
 
-DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal,Camera *camera,Light* light)
+DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal, Camera* camera, std::vector<Light*> lights)
 {
-    this->shaderProgram = new ShaderProgram(drawMode, 0, withNormal == true ? vertexSize / sizeof(float) / 6 : vertexSize / sizeof(float) / 3, camera,light);
+    // Initialize ShaderProgram with vector<Light*>
+    this->shaderProgram = new ShaderProgram(
+        drawMode,
+        0,
+        withNormal ? vertexSize / sizeof(float) / 6 : vertexSize / sizeof(float) / 3,
+        camera,
+        lights  
+    );
 
     this->transformation = Transformation();
 
@@ -46,6 +53,7 @@ void DrawableObject::Draw()
     shaderProgram->UseProgram();
 
     shaderProgram->SetMatrix(transformation.GetMatrix());
+
     shaderProgram->SetMat3Uniform("normalMatrix", glm::mat3(glm::transpose(glm::inverse(transformation.GetMatrix()))));
 
     model.BindVAO();

@@ -1,6 +1,6 @@
 #include "ShaderProgram.h"
 
-ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera,Light* light)
+ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *camera, vector<Light*> lights)
 {
 	this->shader_id = 0;
 
@@ -13,11 +13,32 @@ ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *cam
 
 	camera->Attach(this);
 
-	this->light = light;
-	light->Attach(this);
+	this->lights = lights;
+
+	for (auto light : lights) {
+		light->Attach(this);
+		light->Notify();
+	}
 
 	camera->Notify();
-	light->Notify();
+
+	setLights(lights);
+}
+
+void ShaderProgram::setLights(std::vector<Light*> lights) {
+	// Set up the lights as uniforms
+	for (size_t i = 0; i < lights.size(); ++i) {
+		std::string lightIndex = "lights[" + std::to_string(i) + "].";
+
+		// Set the position of each light (vec3)
+		this->SetVec3Uniform((lightIndex + "position").c_str(), lights[i]->GetPosition());
+
+		// Set the color of each light (vec3)
+		this->SetVec3Uniform((lightIndex + "color").c_str(), lights[i]->GetColor());
+
+		// Set the intensity of each light (float)
+		this->SetFloatUniform((lightIndex + "intensity").c_str(), lights[i]->GetIntensity());
+	}
 }
 
 void ShaderProgram::UpdateViewAndProjection(const glm::mat4& viewMatrix, const glm::mat4& projectionMatrix)
@@ -127,6 +148,16 @@ void ShaderProgram::SetVec3Uniform(const char* uniformName, glm::vec3 vector)
 
 	glUniform3fv(idModelTransform, 1, glm::value_ptr(vector));
 }
+void ShaderProgram::SetVec4Uniform(const char* uniformName, glm::vec4 vector)
+{
+	GLint idModelTransform = glGetUniformLocation(this->shader_id, uniformName);
+
+	if (idModelTransform == -1) {
+		return;
+	}
+
+	glUniform4fv(idModelTransform, 1, glm::value_ptr(vector));
+}
 
 void ShaderProgram::SetFloatUniform(const char* uniformName, float value)
 {
@@ -157,11 +188,7 @@ void ShaderProgram::Update(Subject* subject)
 	}
 	else if (typeid(*subject) == typeid(Light))
 	{
-		this->SetVec3Uniform("lightPosition", this->light->GetPosition());
-		this->SetVec3Uniform("lightColor", this->light->GetColor());
-		this->SetVec3Uniform("objectColor", this->light->GetObjectColor());
-		this->SetFloatUniform("ambientStrength", this->light->GetAmbientStrenght());
-		this->SetFloatUniform("lightIntensity", this->light->GetIntensity());
+		setLights(this->lights);
 	}
 }
 

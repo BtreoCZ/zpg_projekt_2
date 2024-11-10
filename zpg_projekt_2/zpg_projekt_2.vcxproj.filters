@@ -151,5 +151,8 @@
     <Text Include="FragmentConstant.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="phong_lights.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
