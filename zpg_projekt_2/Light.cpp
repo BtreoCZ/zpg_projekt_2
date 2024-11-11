@@ -83,3 +83,4 @@ void Light::Notify()
 		observer->Update(this);
 	}
 }
+

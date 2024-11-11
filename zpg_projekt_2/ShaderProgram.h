@@ -65,6 +65,8 @@ public:
 
 	void UseProgram();
 
+	void DetachProgram();
+
 	void Update(Subject* subject) override;
 
 	void Draw();

@@ -182,17 +182,17 @@ void Application::Init()
 	lights_spheres.push_back(light_spheres);
 
 	srand(time(NULL));
-	;
+	
 
 
-	//Vytvoøení sceny pro trojuhelnik
-	DrawableObject* triangle_object = new DrawableObject(triangle, sizeof(triangle), GL_TRIANGLES, "vertex.txt", "fragment.txt", false, camera_base, lights);
+	////Vytvoøení sceny pro trojuhelnik
+	//DrawableObject* triangle_object = new DrawableObject(triangle, sizeof(triangle), GL_TRIANGLES, "vertex.txt", "fragment.txt", false, camera_base, lights);
 
-	objects_triangle.push_back(triangle_object);
-	light->Notify();
-	Scene* scene_triangle = new Scene(objects_triangle, camera_base);
+	//objects_triangle.push_back(triangle_object);
+	//light->Notify();
+	//Scene* scene_triangle = new Scene(objects_triangle, camera_base);
 
-	AddScene(scene_triangle);
+	//AddScene(scene_triangle);
 	//Vytvoøeni sceny pro stromy a keøe
 	Model* tree_model = new Model();
 	tree_model->GenerateModel(tree, sizeof(tree));
@@ -269,34 +269,34 @@ void Application::Init()
 
 	AddScene(scene_spheres);
 
-	DrawableObject* giftObject = new DrawableObject(gift, sizeof(gift), GL_TRIANGLES, "vertex.txt", "fragment.txt", true, camera_shaders, lights);
-	giftObject->SetScale(glm::vec3(0.5f));
-	giftObject->SetPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
+	//DrawableObject* giftObject = new DrawableObject(gift, sizeof(gift), GL_TRIANGLES, "vertex.txt", "fragment.txt", true, camera_shaders, lights);
+	//giftObject->SetScale(glm::vec3(0.5f));
+	//giftObject->SetPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
 
-	objects_shaders.push_back(giftObject);
+	//objects_shaders.push_back(giftObject);
 
-	DrawableObject* suziObject = new DrawableObject(suziFlat, sizeof(suziFlat), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_shaders, lights);
-	suziObject->SetScale(glm::vec3(0.5f));
-	suziObject->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+	//DrawableObject* suziObject = new DrawableObject(suziFlat, sizeof(suziFlat), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_shaders, lights);
+	//suziObject->SetScale(glm::vec3(0.5f));
+	//suziObject->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
 
-	objects_shaders.push_back(suziObject);
+	//objects_shaders.push_back(suziObject);
 
-	DrawableObject* treeObject = new DrawableObject(tree, sizeof(tree), GL_TRIANGLES, "vertex.txt", "blinn.txt", true, camera_shaders, lights);
-	treeObject->SetScale(glm::vec3(0.5f));
-	treeObject->SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
+	//DrawableObject* treeObject = new DrawableObject(tree, sizeof(tree), GL_TRIANGLES, "vertex.txt", "blinn.txt", true, camera_shaders, lights);
+	//treeObject->SetScale(glm::vec3(0.5f));
+	//treeObject->SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
 
-	objects_shaders.push_back(treeObject);
+	//objects_shaders.push_back(treeObject);
 
-	DrawableObject* sphereObjectShader = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "FragmentConstant.txt", true, camera_shaders, lights);
-	sphereObjectShader->SetScale(glm::vec3(0.5f));
-	sphereObjectShader->SetPosition(glm::vec3(0.0f, -3.0f, 0.0f));
+	//DrawableObject* sphereObjectShader = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "FragmentConstant.txt", true, camera_shaders, lights);
+	//sphereObjectShader->SetScale(glm::vec3(0.5f));
+	//sphereObjectShader->SetPosition(glm::vec3(0.0f, -3.0f, 0.0f));
 
-	objects_shaders.push_back(sphereObjectShader);
+	//objects_shaders.push_back(sphereObjectShader);
 
-	light->Notify();
+	//light->Notify();
 
-	Scene *scene_shaders = new Scene(objects_shaders, camera_shaders);
-	AddScene(scene_shaders);
+	//Scene *scene_shaders = new Scene(objects_shaders, camera_shaders);
+	//AddScene(scene_shaders);
 
 
 

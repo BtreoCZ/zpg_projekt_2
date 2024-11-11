@@ -26,17 +26,16 @@ ShaderProgram::ShaderProgram(GLenum mode, GLint first, GLsizei count,Camera *cam
 }
 
 void ShaderProgram::setLights(std::vector<Light*> lights) {
-	// Set up the lights as uniforms
 	for (size_t i = 0; i < lights.size(); ++i) {
 		std::string lightIndex = "lights[" + std::to_string(i) + "].";
 
-		// Set the position of each light (vec3)
+
 		this->SetVec3Uniform((lightIndex + "position").c_str(), lights[i]->GetPosition());
 
-		// Set the color of each light (vec3)
+
 		this->SetVec3Uniform((lightIndex + "color").c_str(), lights[i]->GetColor());
 
-		// Set the intensity of each light (float)
+
 		this->SetFloatUniform((lightIndex + "intensity").c_str(), lights[i]->GetIntensity());
 	}
 }
@@ -176,6 +175,11 @@ void ShaderProgram::UseProgram()
 
 }
 
+void ShaderProgram::DetachProgram()
+{
+	glUseProgram(0);
+}
+
 void ShaderProgram::Update(Subject* subject)
 {
 	this->UseProgram();
@@ -190,6 +194,8 @@ void ShaderProgram::Update(Subject* subject)
 	{
 		setLights(this->lights);
 	}
+
+	this->DetachProgram();
 }
 
 void ShaderProgram::Draw()

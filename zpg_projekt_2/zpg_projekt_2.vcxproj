@@ -180,6 +180,8 @@
     <Text Include="lambert.txt" />
     <Text Include="phong.txt" />
     <Text Include="phong_lights.txt" />
+    <Text Include="reflector_fragment.txt" />
+    <Text Include="reflector_vertex.txt" />
     <Text Include="vertex.txt" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

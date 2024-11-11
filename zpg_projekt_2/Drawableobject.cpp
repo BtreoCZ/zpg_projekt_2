@@ -76,5 +76,7 @@ void DrawableObject::Draw()
 
     shaderProgram->Draw();
 
+	shaderProgram->DetachProgram();
+
     model.UnbindVAO();
 }

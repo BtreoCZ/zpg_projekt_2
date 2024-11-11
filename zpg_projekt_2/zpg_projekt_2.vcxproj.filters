@@ -160,5 +160,11 @@
     <Text Include="phong_lights.txt">
       <Filter>Source Files</Filter>
     </Text>
+    <Text Include="reflector_fragment.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="reflector_vertex.txt">
+      <Filter>Source Files</Filter>
+    </Text>
   </ItemGroup>
 </Project>
