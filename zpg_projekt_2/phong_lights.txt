@@ -48,7 +48,13 @@ void main() {
         vec3 viewDir = normalize(viewPosition - FragPos);
         vec3 reflectDir = reflect(-lightDirNormalized, norm);
         float spec = pow(max(dot(viewDir, reflectDir), 0.0), 1);
-        vec3 specular = spec * light.color * light.intensity * attenuation;
+        vec3 specular;
+        if(dot(norm, reflectDir) < 0.0) {
+			specular = vec3(0.0);
+		}
+        else{
+            specular = spec * light.color * light.intensity * attenuation;
+        }
         final_specular += specular;
     }
 

@@ -4,7 +4,7 @@
 #include "Subject.h"
 
 using namespace std;
-class Light : public Subject
+class Light : public Subject,public Observer
 {
 	private:
 	glm::vec3 position;
@@ -30,5 +30,6 @@ class Light : public Subject
 		void Attach(Observer* observer) override;
 		void Detach(Observer* observer) override;
 		void Notify() override;
+		void Update(Subject *subject) override;
 };
 

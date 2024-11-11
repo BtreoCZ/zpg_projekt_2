@@ -84,3 +84,7 @@ void Light::Notify()
 	}
 }
 
+void Light::Update(Subject* subject)
+{
+}
+
