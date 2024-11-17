@@ -11,15 +11,9 @@ struct Light {
     vec3 position;
     vec3 color;
     float intensity;
-    int type;          // 0 for point light, 1 for spotlight
-    vec3 direction;    // Only used for spotlight
-    float cutoffAngle; // Only used for spotlight (angle in degrees)
-};
-
-struct Material{
-	float ra;
-	float rd;
-	float rs;
+    int type;
+    vec3 direction;    
+    float cutoffAngle; 
 };
 
 in vec3 FragPos;
@@ -27,14 +21,13 @@ in vec3 Normal;
 
 out vec4 fragColor;
 
-uniform Material material;
 uniform Light lights[MAX_LIGHTS];
 uniform vec3 viewPosition;
 uniform vec3 objectColor = vec3(0.385, 0.647, 0.812);
 uniform float ambientStrength = 0.3f;
 
 void main() {
-    vec3 ambient = material.ra * ambientStrength * objectColor;
+    vec3 ambient = ambientStrength * objectColor;
 
     vec3 final_diffuse = vec3(0.0);
     vec3 final_specular = vec3(0.0);
@@ -52,24 +45,17 @@ void main() {
         vec3 norm = normalize(Normal);
         vec3 lightDirNormalized = normalize(lightDir);
 
-        if (light.type == 3) { // Directional light
-			lightDirNormalized = normalize(-light.direction);
-		}
-        if (light.type == 0) { // Point off 
-			continue;
-		}
-
         // Spotlight (Reflector) check
-        if (light.type == 2) { // Spotlight
+        if (light.type == 1) { // Spotlight
             float theta = dot(lightDirNormalized, normalize(-light.direction)); // angle between light direction and fragment
-            float epsilon = cos(radians(25)); // cutoff angle converted to radians and cosine
+            float epsilon = cos(radians(30)); // cutoff angle converted to radians and cosine
             if (theta < epsilon) {
                 attenuation = 0.0; // Outside the spotlight cone
             }
         }
 
         float diff = max(dot(norm, lightDirNormalized), 0.0);
-        vec3 diffuse = material.rd * diff * light.color * light.intensity * attenuation;
+        vec3 diffuse = diff * light.color * light.intensity * attenuation;
         final_diffuse += diffuse;
 
         vec3 viewDir = normalize(viewPosition - FragPos);
@@ -79,7 +65,7 @@ void main() {
         if (dot(norm, reflectDir) < 0.0) {
             specular = vec3(0.0);
         } else {
-            specular = material.rs * spec * light.color * light.intensity * attenuation;
+            specular = spec * light.color * light.intensity * attenuation;
         }
         final_specular += specular;
     }

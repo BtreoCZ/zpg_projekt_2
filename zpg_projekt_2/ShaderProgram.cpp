@@ -168,6 +168,17 @@ void ShaderProgram::SetFloatUniform(const char* uniformName, float value)
 
 	glUniform1f(idModelTransform, value);
 }
+void ShaderProgram::SetIntUniform(const char* uniformName, int value)
+{
+	GLint idUniform = glGetUniformLocation(this->shader_id, uniformName);
+
+	if (idUniform == -1) {
+		return;
+	}
+
+	glUniform1i(idUniform, value);
+}
+
 void ShaderProgram::UseProgram()
 {
 
@@ -192,7 +203,22 @@ void ShaderProgram::Update(Subject* subject)
 	}
 	else if (typeid(*subject) == typeid(Light))
 	{
-		setLights(this->lights);
+		Light* light = (Light*)subject;
+		string lightIndex = "lights[" + std::to_string(light->GetIndex()) + "].";
+
+
+		this->SetVec3Uniform((lightIndex + "position").c_str(), light->GetPosition());
+
+
+		this->SetVec3Uniform((lightIndex + "color").c_str(), light->GetColor());
+
+		this->SetVec3Uniform((lightIndex + "direction").c_str(), light->GetDirection());
+
+		this->SetIntUniform((lightIndex + "type").c_str(), light->GetType());
+
+
+		this->SetFloatUniform((lightIndex + "intensity").c_str(), light->GetIntensity());
+
 	}
 
 	this->DetachProgram();

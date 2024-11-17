@@ -44,6 +44,11 @@ void Camera::SetProjection(float fov, float aspectRatio, float nearClip, float f
     Notify();
 }
 
+glm::vec3 Camera::GetTarget()
+{
+    return this->target;
+}
+
 glm::vec3 Camera::GetPosition()
 {
     return this->position;

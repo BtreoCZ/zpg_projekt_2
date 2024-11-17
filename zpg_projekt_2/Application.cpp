@@ -16,6 +16,8 @@ void Application::Init()
 	Camera* camera_base = new Camera(glm::vec3(0.0f, 0.0f, 5.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 	Camera* camera_shaders = new Camera(glm::vec3(0.0f, 0.0f, 7.0f), glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(0.0f, 1.0f, 0.0f), 5.0f);
 
+	
+
 	glfwSetErrorCallback(Controller::error_callback);
 	if (!glfwInit()) {
 		fprintf(stderr, "ERROR: could not start GLFW3\n");
@@ -166,18 +168,20 @@ void Application::Init()
 	1.0f, 0.0f, 0.0f,
 	0.5f, 1.0f, 0.0f
 	};
-	Light* light = new Light(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
+	Light* light = new Light(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,camera_forest->GetTarget(),2);
+	light->SetIndex(0);
 
-	Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
+	Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,glm::vec3(0.0),0);
 
-	Light* light_forest2 = new Light(glm::vec3(0.0f, 1.0f, -3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f);
+	Light* light_forest2 = new Light(glm::vec3(0.0f, 1.0f, -3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f, glm::vec3(0.0), 0);
 
-	Light* light_spheres = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 1.0f, 0.2f);
+	Light* light_spheres = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 1.0f, 0.2f, glm::vec3(0.0), 1);
 
 	vector<Light*> lights;
 	lights.push_back(light);
-	lights.push_back(light_forest);
-	lights.push_back(light_forest2);
+	camera_forest->Attach(light);
+	//lights.push_back(light_forest);
+	//lights.push_back(light_forest2);
 	vector<Light*> lights_spheres;
 	lights_spheres.push_back(light_spheres);
 
@@ -204,8 +208,11 @@ void Application::Init()
 	shader_tree->AddShaders("vertex.txt", "phong_lights.txt");
 	ShaderProgram* shader_bush = new ShaderProgram(GL_TRIANGLES, 0, sizeof(bushes) / sizeof(float) / 6, camera_forest, lights);
 	shader_bush->AddShaders("vertex.txt", "phong_lights.txt");
+
+	Material* treeMaterial = new Material(0.4f, 0.6f, 0.1f);
+
 	for (int i = 0; i < 50; i++) {
-		DrawableObject* treeObject = new DrawableObject(tree_model,shader_tree);
+		DrawableObject* treeObject = new DrawableObject(tree_model,shader_tree, treeMaterial);
 		if(i%2){
 		treeObject->EnableDynamicRotation(20.0f, glm::vec3(0.0f, 1.0f, 0.0f));
 		}
@@ -217,7 +224,7 @@ void Application::Init()
 
 		//treeObject.SetRotation(glm::vec3(randomAngleX, randomAngleY, 0));
 
-		DrawableObject* bushObject = new DrawableObject(bush_model,shader_bush);
+		DrawableObject* bushObject = new DrawableObject(bush_model,shader_bush, treeMaterial);
 		bushObject->SetScale(glm::vec3(rand() % 100 / 500.0 + 0.05f));
 		bushObject->SetPosition(glm::vec3(rand() % 20 - 8, 0.0f, rand() % 50));
 
@@ -228,6 +235,7 @@ void Application::Init()
 	DrawableObject* plainObject= new DrawableObject(plain, sizeof(plain), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_forest, lights);
 	plainObject->SetScale(glm::vec3(10.0f));
 	plainObject->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	plainObject->setMaterial(treeMaterial);
 
 	objects_forest.push_back(plainObject);
 
@@ -236,29 +244,37 @@ void Application::Init()
 	Scene *scene_forest= new Scene(objects_forest, camera_forest);
 	AddScene(scene_forest);
 
+	Material* metal = new Material(0.1, 0.3, 1.0);
 	//vytvoøení scény pro koule
 	DrawableObject* sphereObject = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject->SetScale(glm::vec3(0.5f));
 	sphereObject->SetPosition(glm::vec3(-3.0f, 0.0f, 0.0f));
+	sphereObject->setMaterial(metal);
 
 
 	objects_spheres.push_back(sphereObject);
 
+	Material* glass = new Material(0.1, 0.05, 0.9);
 	DrawableObject* sphereObject2 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject2->SetScale(glm::vec3(0.5f));
 	sphereObject2->SetPosition(glm::vec3(3.0f, 0.0f, 0.0f));
+	sphereObject2->setMaterial(glass);
 
 	objects_spheres.push_back(sphereObject2);
 
+	Material* wood = new Material(0.4, 0.6, 0.1);
 	DrawableObject* sphereObject3 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject3->SetScale(glm::vec3(0.5f));
 	sphereObject3->SetPosition(glm::vec3(0.0f, 3.0f, 0.0f));
+	sphereObject3->setMaterial(wood);
 
 	objects_spheres.push_back(sphereObject3);
 
+	Material* plastic = new Material(0.2, 0.5, 0.3);
 	DrawableObject* sphereObject4 = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject4->SetScale(glm::vec3(0.5f));
 	sphereObject4->SetPosition(glm::vec3(0.0f, -3.0f, 0.0f));
+	sphereObject4->setMaterial(plastic);
 
 	objects_spheres.push_back(sphereObject4);
 

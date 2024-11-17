@@ -22,7 +22,7 @@ DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLe
     shaderProgram->AddShaders(vertexShader, fragmentShader);
 }
 
-DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram) : shaderProgram(shaderProgram), model(*model)
+DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram, Material* material) : shaderProgram(shaderProgram), model(*model), material(material)
 {
     this->transformation = Transformation();
 }
@@ -61,6 +61,11 @@ void DrawableObject::UpdateRotation(float deltaTime)
     }
 }
 
+void DrawableObject::setMaterial(Material* material)
+{
+	this->material = material;
+}
+
 
 void DrawableObject::Draw()
 {
@@ -71,6 +76,13 @@ void DrawableObject::Draw()
     shaderProgram->SetMatrix(transformation.GetMatrix());
 
     shaderProgram->SetMat3Uniform("normalMatrix", glm::mat3(glm::transpose(glm::inverse(transformation.GetMatrix()))));
+
+    shaderProgram->SetFloatUniform("material.ra", this->material->GetAmbientCoefficient());
+
+    shaderProgram->SetFloatUniform("material.rd", this->material->GetDiffuseCoefficient());
+
+    shaderProgram->SetFloatUniform("material.rs", this->material->GetSpecularCoefficient());
+
 
     model.BindVAO();
 

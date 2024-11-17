@@ -19,6 +19,7 @@
 #include "Light.h"
 
 class Camera;
+class Light;
 
 
 class ShaderProgram : Observer
@@ -44,6 +45,7 @@ public:
 
 	void setLights(vector<Light*> lights);
 
+	void setLight(int index);
 
 	void AddShaders(const char* vertex_shader, const char* fragment_shader);
 
@@ -62,6 +64,8 @@ public:
 	void SetVec4Uniform(const char* uniformName, glm::vec4 vector);
 
 	void SetFloatUniform(const char* uniformName, float value);
+
+	void SetIntUniform(const char* uniformName, int value);
 
 	void UseProgram();
 
