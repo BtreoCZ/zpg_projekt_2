@@ -14,7 +14,7 @@
 /// Defines a templated dual-quaternion type and several dual-quaternion operations.
 
 #pragma once
-
+#define GLM_ENABLE_EXPERIMENTAL
 // Dependency:
 #include "../glm.hpp"
 #include "../gtc/constants.hpp"

@@ -45,7 +45,6 @@ public:
 
 	void setLights(vector<Light*> lights);
 
-	void setLight(int index);
 
 	void AddShaders(const char* vertex_shader, const char* fragment_shader);
 

@@ -20,6 +20,7 @@ void Material::SetSpecularCoefficient(float specular)
 	this->rs = specular;
 }
 
+
 float Material::GetAmbientCoefficient()
 {
 	return this->ra;

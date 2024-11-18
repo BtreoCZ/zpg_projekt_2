@@ -62,7 +62,7 @@ void main() {
         // Spotlight (Reflector) check
         if (light.type == 2) { // Spotlight
             float theta = dot(lightDirNormalized, normalize(-light.direction)); // angle between light direction and fragment
-            float epsilon = cos(radians(25)); // cutoff angle converted to radians and cosine
+            float epsilon = cos(radians(25.0)); // cutoff angle converted to radians and cosine
             if (theta < epsilon) {
                 attenuation = 0.0; // Outside the spotlight cone
             }

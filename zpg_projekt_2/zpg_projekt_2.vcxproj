@@ -104,13 +104,13 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Knihovny\glm-master;..\Knihovny\glfw-3.4.bin.WIN64\include;..\Knihovny\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Knihovny\soil\include;..\Knihovny\glm-master;..\Knihovny\glfw-3.4.bin.WIN64\include;..\Knihovny\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Knihovny\glfw-3.4.bin.WIN64\lib-vc2022;..\Knihovny\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
-      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;glew32.lib;%(AdditionalDependencies)</AdditionalDependencies>
+      <AdditionalLibraryDirectories>..\Knihovny\soil\lib;..\Knihovny\glfw-3.4.bin.WIN64\lib-vc2022;..\Knihovny\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;glew32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
   <ItemDefinitionGroup Condition="'$(Configuration)|$(Platform)'=='Release|x64'">
@@ -138,6 +138,7 @@
     <ClCompile Include="main.cpp" />
     <ClCompile Include="Material.cpp" />
     <ClCompile Include="Model.cpp" />
+    <ClCompile Include="ModelTexture.cpp" />
     <ClCompile Include="Observer.cpp" />
     <ClCompile Include="Rotate.cpp" />
     <ClCompile Include="Scale.cpp" />
@@ -145,6 +146,7 @@
     <ClCompile Include="ShaderLoader.cpp" />
     <ClCompile Include="ShaderProgram.cpp" />
     <ClCompile Include="Subject.cpp" />
+    <ClCompile Include="Texture.cpp" />
     <ClCompile Include="Transformation.cpp" />
     <ClCompile Include="TransformationComponent.cpp" />
     <ClCompile Include="Translate.cpp" />
@@ -164,6 +166,7 @@
     <ClInclude Include="Light.h" />
     <ClInclude Include="Material.h" />
     <ClInclude Include="Model.h" />
+    <ClInclude Include="ModelTexture.h" />
     <ClInclude Include="Observer.h" />
     <ClInclude Include="Rotate.h" />
     <ClInclude Include="Scale.h" />
@@ -171,6 +174,7 @@
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderProgram.h" />
     <ClInclude Include="Subject.h" />
+    <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformation.h" />
     <ClInclude Include="TransformationComponent.h" />
     <ClInclude Include="Translate.h" />
@@ -179,6 +183,7 @@
     <Text Include="blinn.txt" />
     <Text Include="fragment.txt" />
     <Text Include="FragmentConstant.txt" />
+    <Text Include="fragment_texture.txt" />
     <Text Include="lambert.txt" />
     <Text Include="phong.txt" />
     <Text Include="phong_lights.txt" />
@@ -188,6 +193,9 @@
   </ItemGroup>
   <ItemGroup>
     <None Include="phong_lights_random.glsl" />
+  </ItemGroup>
+  <ItemGroup>
+    <Image Include="wooden_fence.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />
   <ImportGroup Label="ExtensionTargets">

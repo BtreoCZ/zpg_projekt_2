@@ -1,4 +1,4 @@
-#include "Application.h"
+ï»¿#include "Application.h"
 #include "plain.h"
 
 float deltaTime2 = 0;
@@ -153,7 +153,7 @@ void Application::Init()
 	};
 
 
-	//Nastavení kamer
+	//NastavenÃ­ kamer
 	camera_forest->SetProjection(60.0f,ratio, 0.1f, 100.0f);
 	camera_spheres->SetProjection(60.0f, ratio, 0.1f, 100.0f);
 	camera_base->SetProjection(60.0f, ratio, 0.1f, 100.0f);
@@ -171,9 +171,11 @@ void Application::Init()
 	Light* light = new Light(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,camera_forest->GetTarget(),2);
 	light->SetIndex(0);
 
-	Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,glm::vec3(0.0),0);
+	//Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,glm::vec3(0.0),0);
+	//light_forest->SetIndex(1);
 
-	Light* light_forest2 = new Light(glm::vec3(0.0f, 1.0f, -3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f, glm::vec3(0.0), 0);
+	//Light* light_forest2 = new Light(glm::vec3(0.0f, 1.0f, -3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f, glm::vec3(0.0), 0);
+	//light_forest2->SetIndex(2);
 
 	Light* light_spheres = new Light(glm::vec3(0.0f, 0.0f, 0.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 1.0f, 0.2f, glm::vec3(0.0), 1);
 
@@ -189,7 +191,7 @@ void Application::Init()
 	
 
 
-	////Vytvoøení sceny pro trojuhelnik
+	////VytvoÃ¸enÃ­ sceny pro trojuhelnik
 	//DrawableObject* triangle_object = new DrawableObject(triangle, sizeof(triangle), GL_TRIANGLES, "vertex.txt", "fragment.txt", false, camera_base, lights);
 
 	//objects_triangle.push_back(triangle_object);
@@ -197,7 +199,7 @@ void Application::Init()
 	//Scene* scene_triangle = new Scene(objects_triangle, camera_base);
 
 	//AddScene(scene_triangle);
-	//Vytvoøeni sceny pro stromy a keøe
+	//VytvoÃ¸eni sceny pro stromy a keÃ¸e
 	Model* tree_model = new Model();
 	tree_model->GenerateModel(tree, sizeof(tree));
 
@@ -245,7 +247,7 @@ void Application::Init()
 	AddScene(scene_forest);
 
 	Material* metal = new Material(0.1, 0.3, 1.0);
-	//vytvoøení scény pro koule
+	//vytvoÃ¸enÃ­ scÃ©ny pro koule
 	DrawableObject* sphereObject = new DrawableObject(sphere, sizeof(sphere), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_spheres, lights_spheres);
 	sphereObject->SetScale(glm::vec3(0.5f));
 	sphereObject->SetPosition(glm::vec3(-3.0f, 0.0f, 0.0f));

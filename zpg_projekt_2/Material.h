@@ -4,6 +4,7 @@ class Material
     float ra;
     float rd;
     float rs;
+
 public:
 
     Material(float ambient, float diffuse, float specular);
@@ -11,6 +12,7 @@ public:
     void SetAmbientCoefficient(float ambient);
     void SetDiffuseCoefficient(float diffuse);
     void SetSpecularCoefficient(float specular);
+
 
     float GetAmbientCoefficient();
     float GetDiffuseCoefficient();
