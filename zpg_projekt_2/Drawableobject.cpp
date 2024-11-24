@@ -22,6 +22,28 @@ DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLe
     shaderProgram->AddShaders(vertexShader, fragmentShader);
 }
 
+DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal, Camera* camera, vector<Light*> lights, Texture* texture)
+{
+    // Initialize ShaderProgram with vector<Light*>
+    this->shaderProgram = new ShaderProgram(
+        drawMode,
+        0,
+        withNormal ? vertexSize / sizeof(float) / 6 : vertexSize / sizeof(float) / 3,
+        camera,
+        lights
+    );
+
+    this->transformation = Transformation();
+
+	this->texture = texture;
+
+	modelTexture.GenerateModel(vertices);
+
+    this->hasTexture = true;
+
+    shaderProgram->AddShaders(vertexShader, fragmentShader);
+}
+
 DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram, Material* material) : shaderProgram(shaderProgram), model(*model), material(material)
 {
     this->transformation = Transformation();
@@ -66,6 +88,12 @@ void DrawableObject::setMaterial(Material* material)
 	this->material = material;
 }
 
+void DrawableObject::setTexture(Texture* texture)
+{
+	this->texture = texture;
+	this->hasTexture = true;
+}
+
 
 void DrawableObject::Draw()
 {
@@ -83,6 +111,19 @@ void DrawableObject::Draw()
 
     shaderProgram->SetFloatUniform("material.rs", this->material->GetSpecularCoefficient());
 
+	if (hasTexture)
+	{
+
+		shaderProgram->SetIntUniform("textureUnitID", texture->GetTextureID());
+
+		modelTexture.BindVAO();
+
+        shaderProgram->Draw();
+
+		shaderProgram->DetachProgram();
+
+		modelTexture.UnbindVAO();
+	}else {
 
     model.BindVAO();
 
@@ -91,4 +132,5 @@ void DrawableObject::Draw()
 	shaderProgram->DetachProgram();
 
     model.UnbindVAO();
+    }
 }

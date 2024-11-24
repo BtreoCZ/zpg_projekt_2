@@ -173,6 +173,7 @@
     <ClInclude Include="Scene.h" />
     <ClInclude Include="ShaderLoader.h" />
     <ClInclude Include="ShaderProgram.h" />
+    <ClInclude Include="skycube.h" />
     <ClInclude Include="Subject.h" />
     <ClInclude Include="Texture.h" />
     <ClInclude Include="Transformation.h" />
@@ -183,7 +184,7 @@
     <Text Include="blinn.txt" />
     <Text Include="fragment.txt" />
     <Text Include="FragmentConstant.txt" />
-    <Text Include="fragment_texture.txt" />
+    <Text Include="fragmentTexture.txt" />
     <Text Include="lambert.txt" />
     <Text Include="phong.txt" />
     <Text Include="phong_lights.txt" />
@@ -195,6 +196,7 @@
     <None Include="phong_lights_random.glsl" />
   </ItemGroup>
   <ItemGroup>
+    <Image Include="..\..\..\..\OneDrive - VSB-TUO\Plocha\ZPG\multipletextures\grass.png" />
     <Image Include="wooden_fence.png" />
   </ItemGroup>
   <Import Project="$(VCTargetsPath)\Microsoft.Cpp.targets" />

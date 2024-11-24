@@ -3,6 +3,7 @@
 
 float deltaTime2 = 0;
 float lastFrame2 = 0;
+int Texture::textureCount = 0;
 
 void Application::Init()
 {
@@ -168,6 +169,17 @@ void Application::Init()
 	1.0f, 0.0f, 0.0f,
 	0.5f, 1.0f, 0.0f
 	};
+
+	const float plain_texture[] = {
+		//vrchol, normála, uv souřadnice
+		1.0f, 0.0f, 1.0f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,
+		1.0f, 0.0f,-1.0f,   0.0f, 1.0f, 0.0f,   1.0f, 0.0f,
+	   -1.0f, 0.0f,-1.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f,
+
+	   -1.0f, 0.0f, 1.0f,   0.0f, 1.0f, 0.0f,   0.0f, 1.0f,
+		1.0f, 0.0f, 1.0f,   0.0f, 1.0f, 0.0f,   0.0f, 0.0f,
+	   -1.0f, 0.0f,-1.0f,   0.0f, 1.0f, 0.0f,   1.0f, 1.0f
+	};
 	Light* light = new Light(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,camera_forest->GetTarget(),2);
 	light->SetIndex(0);
 
@@ -234,7 +246,11 @@ void Application::Init()
 		objects_forest.push_back(bushObject);
 	}
 
-	DrawableObject* plainObject= new DrawableObject(plain, sizeof(plain), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_forest, lights);
+	Texture* plainTexture = new Texture;
+	plainTexture->LoadTexture("grass.png");
+
+	DrawableObject* plainObject= new DrawableObject(plain_texture, sizeof(plain_texture), GL_TRIANGLES, "vertex.txt", "fragmentTexture.txt", true, camera_forest, lights, plainTexture);
+
 	plainObject->SetScale(glm::vec3(10.0f));
 	plainObject->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	plainObject->setMaterial(treeMaterial);

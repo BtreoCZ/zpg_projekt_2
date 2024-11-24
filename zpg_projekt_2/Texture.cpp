@@ -12,11 +12,26 @@ void Texture::LoadTexture(const char* filename)
 {
     this->textureID = Texture::textureCount;
     Texture::textureCount++;
-    glActiveTexture(GL_TEXTURE+textureID);
-    GLuint image = SOIL_load_OGL_texture("wooden_fence.png", SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
-    if (image == NULL) {
+
+    glActiveTexture(GL_TEXTURE0+textureID);
+     this->image = SOIL_load_OGL_texture(filename, SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+
+    if (this->image == NULL) {
         printf("An error occurred while loading image.");
         exit(EXIT_FAILURE);
     }
-    glBindTexture(GL_TEXTURE_2D, image);
+    glBindTexture(GL_TEXTURE_2D, this->image);
+}
+
+void Texture::BindTexture()
+{
+	glActiveTexture(GL_TEXTURE0 + textureID);
+
+	glBindTexture(GL_TEXTURE_2D, this->image);
+}
+
+
+GLuint Texture::GetTextureID()
+{
+	return this->textureID;
 }

@@ -6,11 +6,10 @@ class Texture
 {
 	GLuint textureID;
 	static int textureCount;
+	GLuint image;
 public:
 	Texture();
 	void LoadTexture(const char* filename);
 	void BindTexture();
-	void UnbindTexture();
 	GLuint GetTextureID();
 };
-
