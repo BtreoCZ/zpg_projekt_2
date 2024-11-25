@@ -6,14 +6,14 @@ ModelTexture::ModelTexture()
 	this->VBO = 0;
 }
 
-void ModelTexture::GenerateModel(const float* points)
+void ModelTexture::GenerateModel(const float* points, GLsizeiptr size)
 {
     glGenVertexArrays(1, &this->VAO); //generate the VAO
     glBindVertexArray(this->VAO); //bind the VAO
 
     glGenBuffers(1, &this->VBO); // generate the VBO
     glBindBuffer(GL_ARRAY_BUFFER, this->VBO);
-    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+    glBufferData(GL_ARRAY_BUFFER, size, points, GL_STATIC_DRAW);
 
 
 
@@ -27,6 +27,8 @@ void ModelTexture::GenerateModel(const float* points)
 
     glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(sizeof(float) * 6));
 
+    glBindBuffer(GL_ARRAY_BUFFER, 0);
+    glBindVertexArray(0);
 }
 
 void ModelTexture::BindVAO()

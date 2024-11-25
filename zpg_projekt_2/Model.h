@@ -15,6 +15,7 @@ public:
 
     void GenerateModel(const float* points, GLsizeiptr size);
     void GenerateModelWithoutNormals(const float* points, GLsizeiptr size);
+	void GenerateModelWithTexture(const float* points, GLsizeiptr size);
 
     void BindVAO();
 

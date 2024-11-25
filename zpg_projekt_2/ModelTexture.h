@@ -9,7 +9,7 @@ public:
 
     ModelTexture();
 
-    void GenerateModel(const float* points);
+    void GenerateModel(const float* points, GLsizeiptr size);
 
     void BindVAO();
 

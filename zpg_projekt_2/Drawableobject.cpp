@@ -37,7 +37,7 @@ DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLe
 
 	this->texture = texture;
 
-	modelTexture.GenerateModel(vertices);
+	modelTexture.GenerateModel(vertices,vertexSize);
 
     this->hasTexture = true;
 

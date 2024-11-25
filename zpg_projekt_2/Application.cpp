@@ -200,17 +200,19 @@ void Application::Init()
 	lights_spheres.push_back(light_spheres);
 
 	srand(time(NULL));
+	Texture* plainTexture = new Texture;
+	plainTexture->LoadTexture("grass.png");
 	
-
+	Material* treeMaterial = new Material(0.4f, 0.6f, 0.1f);
 
 	////Vytvoøení sceny pro trojuhelnik
-	//DrawableObject* triangle_object = new DrawableObject(triangle, sizeof(triangle), GL_TRIANGLES, "vertex.txt", "fragment.txt", false, camera_base, lights);
+	DrawableObject* triangle_object = new DrawableObject(plain_texture, sizeof(plain_texture), GL_TRIANGLES, "vertex.txt", "fragmentTexture.txt", true, camera_base, lights_spheres, plainTexture);
+	triangle_object->setMaterial(treeMaterial);
 
-	//objects_triangle.push_back(triangle_object);
-	//light->Notify();
-	//Scene* scene_triangle = new Scene(objects_triangle, camera_base);
-
-	//AddScene(scene_triangle);
+	objects_triangle.push_back(triangle_object);
+	light->Notify();
+	Scene* scene_triangle = new Scene(objects_triangle, camera_base);
+	AddScene(scene_triangle);
 	//Vytvoøeni sceny pro stromy a keøe
 	Model* tree_model = new Model();
 	tree_model->GenerateModel(tree, sizeof(tree));
@@ -223,7 +225,7 @@ void Application::Init()
 	ShaderProgram* shader_bush = new ShaderProgram(GL_TRIANGLES, 0, sizeof(bushes) / sizeof(float) / 6, camera_forest, lights);
 	shader_bush->AddShaders("vertex.txt", "phong_lights.txt");
 
-	Material* treeMaterial = new Material(0.4f, 0.6f, 0.1f);
+	
 
 	for (int i = 0; i < 50; i++) {
 		DrawableObject* treeObject = new DrawableObject(tree_model,shader_tree, treeMaterial);
@@ -246,16 +248,17 @@ void Application::Init()
 		objects_forest.push_back(bushObject);
 	}
 
-	Texture* plainTexture = new Texture;
-	plainTexture->LoadTexture("grass.png");
-
-	DrawableObject* plainObject= new DrawableObject(plain_texture, sizeof(plain_texture), GL_TRIANGLES, "vertex.txt", "fragmentTexture.txt", true, camera_forest, lights, plainTexture);
+	
+	DrawableObject* plainObject= new DrawableObject(plain_texture, sizeof(plain_texture), GL_TRIANGLES, "vertex.txt", "fragmentTexture.txt", true, camera_forest, lights,plainTexture);
 
 	plainObject->SetScale(glm::vec3(10.0f));
 	plainObject->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	plainObject->setMaterial(treeMaterial);
 
+	plainObject->Draw();
+
 	objects_forest.push_back(plainObject);
+
 
 	light->Notify();
 

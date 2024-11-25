@@ -3,6 +3,7 @@ out vec4 frag_colour;
 uniform sampler2D textureUnitID;
 in vec2 uvt;
 void main () {
-     //frag_colour = vec4(uv,1.0,1.0); //test na funkcnost uv souøadnic
+     //frag_colour = vec4(uvt,1.0,1.0); //test na funkcnost uv souøadnic
      frag_colour = texture(textureUnitID, uvt);
+     //frag_colour - vec4(1.0, 0.0, 0.0, 1.0);
 }
