@@ -104,12 +104,12 @@
       <SDLCheck>true</SDLCheck>
       <PreprocessorDefinitions>_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <ConformanceMode>true</ConformanceMode>
-      <AdditionalIncludeDirectories>..\Knihovny\soil\include;..\Knihovny\glm-master;..\Knihovny\glfw-3.4.bin.WIN64\include;..\Knihovny\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
+      <AdditionalIncludeDirectories>..\Knihovny\assimp\include;..\Knihovny\soil\include;..\Knihovny\glm-master;..\Knihovny\glfw-3.4.bin.WIN64\include;..\Knihovny\glew-2.1.0\include;%(AdditionalIncludeDirectories)</AdditionalIncludeDirectories>
     </ClCompile>
     <Link>
       <SubSystem>Console</SubSystem>
       <GenerateDebugInformation>true</GenerateDebugInformation>
-      <AdditionalLibraryDirectories>..\Knihovny\soil\lib;..\Knihovny\glfw-3.4.bin.WIN64\lib-vc2022;..\Knihovny\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
+      <AdditionalLibraryDirectories>..\Knihovny\assimp\lib\x64;..\Knihovny\soil\lib;..\Knihovny\glfw-3.4.bin.WIN64\lib-vc2022;..\Knihovny\glew-2.1.0\lib\Release\x64;%(AdditionalLibraryDirectories)</AdditionalLibraryDirectories>
       <AdditionalDependencies>opengl32.lib;glu32.lib;glfw3.lib;glew32.lib;SOIL.lib;%(AdditionalDependencies)</AdditionalDependencies>
     </Link>
   </ItemDefinitionGroup>
