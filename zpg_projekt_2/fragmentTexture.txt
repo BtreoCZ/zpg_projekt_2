@@ -5,5 +5,5 @@ in vec2 uvt;
 void main () {
      //frag_colour = vec4(uvt,1.0,1.0); //test na funkcnost uv souøadnic
      frag_colour = texture(textureUnitID, uvt);
-     //frag_colour - vec4(1.0, 0.0, 0.0, 1.0);
+     //frag_colour - vec4(1.0, 1.0, 0.0, 1.0);
 }

@@ -8,6 +8,16 @@ Scene::Scene(vector<DrawableObject*> drawableObjects, Camera* camera)
     camera->Notify();
 }
 
+Scene::Scene(vector<DrawableObject*> drawableObjects, Camera* camera, Skybox* skybox)
+{
+	this->camera = camera;
+	this->objects = drawableObjects;
+	this->skybox = skybox;
+
+	camera->Notify();
+
+}
+
 void Scene::Init(std::vector<DrawableObject*> drawableObjects,Camera *camera)
 {
     this->camera = camera;
@@ -16,6 +26,8 @@ void Scene::Init(std::vector<DrawableObject*> drawableObjects,Camera *camera)
 
 void Scene::Render()
 {
+    skybox->Draw();
+
     for (auto& object : objects)
     {
         object->Draw();

@@ -26,6 +26,8 @@
 #include "gift.h"
 #include "suzi_flat.h"
 #include "Controller.h"
+#include "Skybox.h"
+#include "skycube.h"
 using namespace std;
 
 class Application

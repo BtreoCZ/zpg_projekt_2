@@ -1,8 +1,4 @@
-
-
 #include "Application.h"
-
-
 
 int main(void)
 {
@@ -14,7 +10,7 @@ int main(void)
 	application->Run();
 
 }
-
+//#include "Texture.h"
 ////Include GLEW
 //#include <GL/glew.h>
 ////Include GLFW
@@ -29,53 +25,75 @@ int main(void)
 //
 //#include <SOIL.h>
 //
+//#include<assimp/Importer.hpp>// C++ importerinterface
+//#include<assimp/scene.h>// aiSceneoutputdata structure
+//#include<assimp/postprocess.h>// Post processingflags
+//
+//
 //#include <iostream>
+//#include <fstream>
+//#include <iomanip>   // std::setprecision, std::setw
+//#include <vector>
 //
+//#include "ShaderLoader.h"
 //
-//float points[] = {
-//0.000000f, -0.500000f, 0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.477063f,
-//0.000000f, 0.500000f, 0.000000f, -0.872900f, 0.218200f, 0.436400f, 0.399527f, 0.286309f,
-//-0.500000f, -0.500000f, -0.500000f, -0.872900f, 0.218200f, 0.436400f, 0.836598f, 0.000179f,
-//-0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.999821f,
-//0.500000f, -0.500000f, -0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.000179f, 0.809067f,
-//0.000000f, -0.500000f, 0.500000f, 0.000000f, -1.000000f, 0.000000f, 0.381686f, 0.522937f,
-//0.500000f, -0.500000f, -0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.000179f,
-//0.000000f, 0.500000f, 0.000000f, 0.872900f, 0.218200f, 0.436400f, 0.399169f, 0.522579f,
-//0.000000f, -0.500000f, 0.500000f, 0.872900f, 0.218200f, 0.436400f, 0.000179f, 0.261379f,
-//-0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.477421f,
-//0.000000f, 0.500000f, 0.000000f, 0.000000f, 0.447200f, -0.894400f, 0.788901f, 0.999821f,
-//0.500000f, -0.500000f, -0.500000f, 0.000000f, 0.447200f, -0.894400f, 0.399527f, 0.651554f
+//using namespace std;
+//
+////import cube.obj
+//const float skycube[108] = {
+//    -1.0f,-1.0f,-1.0f,
+//    -1.0f,-1.0f, 1.0f,
+//    -1.0f, 1.0f, 1.0f,
+//    1.0f, 1.0f,-1.0f,
+//    -1.0f,-1.0f,-1.0f,
+//    -1.0f, 1.0f,-1.0f,
+//    1.0f,-1.0f, 1.0f,
+//    -1.0f,-1.0f,-1.0f,
+//    1.0f,-1.0f,-1.0f,
+//    1.0f, 1.0f,-1.0f,
+//    1.0f,-1.0f,-1.0f,
+//    -1.0f,-1.0f,-1.0f,
+//    -1.0f,-1.0f,-1.0f,
+//    -1.0f, 1.0f, 1.0f,
+//    -1.0f, 1.0f,-1.0f,
+//    1.0f,-1.0f, 1.0f,
+//    -1.0f,-1.0f, 1.0f,
+//    -1.0f,-1.0f,-1.0f,
+//    -1.0f, 1.0f, 1.0f,
+//    -1.0f,-1.0f, 1.0f,
+//    1.0f,-1.0f, 1.0f,
+//    1.0f, 1.0f, 1.0f,
+//    1.0f,-1.0f,-1.0f,
+//    1.0f, 1.0f,-1.0f,
+//    1.0f,-1.0f,-1.0f,
+//    1.0f, 1.0f, 1.0f,
+//    1.0f,-1.0f, 1.0f,
+//    1.0f, 1.0f, 1.0f,
+//    1.0f, 1.0f,-1.0f,
+//    -1.0f, 1.0f,-1.0f,
+//    1.0f, 1.0f, 1.0f,
+//    -1.0f, 1.0f,-1.0f,
+//    -1.0f, 1.0f, 1.0f,
+//    1.0f, 1.0f, 1.0f,
+//    -1.0f, 1.0f, 1.0f,
+//    1.0f,-1.0f, 1.0f
 //};
 //
-//const char* vertex_shader =
-//"#version 330\n"
-//"layout(location = 0) in vec3 vp;"
-//"layout(location = 1) in vec3 vc;"
-//"layout(location = 2) in vec2 uv; "
-//"uniform mat4 modelMatrix;"
-//"out vec2 uvc;"
-//""
-//"void main () {"
-//"    gl_Position = modelMatrix * vec4 (vp, 1.0);"
-//"    uvc=uv;"
-//"}";
 //
-//const char* fragment_shader =
-//"#version 330\n"
-//"out vec4 frag_colour;"
-//"uniform sampler2D textureUnitID;"
-//"in vec2 uvc;"
-//"void main () {"
-//"     frag_colour = texture(textureUnitID, uvc);"
-//"}";
-//
+//GLuint shaderProgram = 0;
 //
 //static void error_callback(int error, const char* description) {
 //    fputs(description, stderr);
 //}
 //
+//static void key_callback(GLFWwindow* window, int key, int scancode, int action, int mods)
+//{
+//    if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS) glfwSetWindowShouldClose(window, GL_TRUE);
+//}
+//
 //int main(void)
 //{
+//
 //    GLFWwindow* window;
 //    glfwSetErrorCallback(error_callback);
 //    if (!glfwInit()) {
@@ -96,102 +114,64 @@ int main(void)
 //    glewExperimental = GL_TRUE;
 //    glewInit();
 //
-//
-//    // get version info
-//    printf("OpenGL Version: %s\n", glGetString(GL_VERSION));
-//    printf("Using GLEW %s\n", glewGetString(GLEW_VERSION));
-//    printf("Vendor %s\n", glGetString(GL_VENDOR));
-//    printf("Renderer %s\n", glGetString(GL_RENDERER));
-//    printf("GLSL %s\n", glGetString(GL_SHADING_LANGUAGE_VERSION));
-//    int major, minor, revision;
-//    glfwGetVersion(&major, &minor, &revision);
-//    printf("Using GLFW %i.%i.%i\n", major, minor, revision);
-//
-//    int a;
-//    glGetIntegerv(GL_MAX_TEXTURE_IMAGE_UNITS, &a);
-//    printf("Texture units: %d", a);
-//
 //    int width, height;
 //    glfwGetFramebufferSize(window, &width, &height);
 //    float ratio = width / (float)height;
 //    glViewport(0, 0, width, height);
-//    //vertex buffer object (VBO)
+//
+//    //Vertex Array Object (VAO)
 //    GLuint VBO = 0;
 //    glGenBuffers(1, &VBO); // generate the VBO
 //    glBindBuffer(GL_ARRAY_BUFFER, VBO);
-//    glBufferData(GL_ARRAY_BUFFER, sizeof(points), points, GL_STATIC_DRAW);
+//    glBufferData(GL_ARRAY_BUFFER, sizeof(skycube), &skycube[0], GL_STATIC_DRAW);
 //
-//    //Vertex Array Object (VAO)
 //    GLuint VAO = 0;
 //    glGenVertexArrays(1, &VAO); //generate the VAO
 //    glBindVertexArray(VAO); //bind the VAO
 //    glBindBuffer(GL_ARRAY_BUFFER, VBO);
+//
 //    //enable vertex attributes
 //    glEnableVertexAttribArray(0);
-//    glEnableVertexAttribArray(1);
-//    glEnableVertexAttribArray(2);
+//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 3 * sizeof(float), (GLvoid*)0);
 //
-//    glVertexAttribPointer(0, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)0);
-//    glVertexAttribPointer(1, 3, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(sizeof(float) * 3));
-//    glVertexAttribPointer(2, 2, GL_FLOAT, GL_FALSE, 8 * sizeof(float), (GLvoid*)(sizeof(float) * 6));
+//    //Create and compile shaders
+//    new ShaderLoader("skybox_vertex.txt", "skybox_fragment.txt", &shaderProgram);
 //
-//
-//    //create and compile shaders
-//    GLuint vertexShader = glCreateShader(GL_VERTEX_SHADER);
-//    glShaderSource(vertexShader, 1, &vertex_shader, NULL);
-//    glCompileShader(vertexShader);
-//    GLuint fragmentShader = glCreateShader(GL_FRAGMENT_SHADER);
-//    glShaderSource(fragmentShader, 1, &fragment_shader, NULL);
-//    glCompileShader(fragmentShader);
-//    GLuint shaderProgram = glCreateProgram();
-//    glAttachShader(shaderProgram, fragmentShader);
-//    glAttachShader(shaderProgram, vertexShader);
-//    glLinkProgram(shaderProgram);
-//    GLint status;
-//    glGetProgramiv(shaderProgram, GL_LINK_STATUS, &status);
-//    if (status == GL_FALSE)
-//    {
-//        GLint infoLogLength;
-//        glGetProgramiv(shaderProgram, GL_INFO_LOG_LENGTH, &infoLogLength);
-//        GLchar* strInfoLog = new GLchar[infoLogLength + 1];
-//        glGetProgramInfoLog(shaderProgram, infoLogLength, NULL, strInfoLog);
-//        fprintf(stderr, "Linker failure: %s\n", strInfoLog);
-//        delete[] strInfoLog;
-//    }
-//
+//    //Textures - Albedo
 //    glActiveTexture(GL_TEXTURE0);
-//    GLuint image = SOIL_load_OGL_texture("wooden_fence.png", SOIL_LOAD_RGBA, SOIL_CREATE_NEW_ID, SOIL_FLAG_INVERT_Y);
+//    GLuint image = SOIL_load_OGL_cubemap("posx.jpg", "negx.jpg", "posy.jpg", "negy.jpg", "posz.jpg", "negz.jpg", SOIL_LOAD_RGB, SOIL_CREATE_NEW_ID, SOIL_FLAG_MIPMAPS);
 //    if (image == NULL) {
-//        std::cout << "An error occurred while loading image." << std::endl;
+//        std::cout << "An error occurred while loading CubeMap." << std::endl;
 //        exit(EXIT_FAILURE);
 //    }
 //    glBindTexture(GL_TEXTURE_2D, image);
+//    glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
+//
 //
 //    glm::mat4 M = glm::mat4(1.0f);
 //    float angle = 0;
 //
+//    glUseProgram(shaderProgram);
+//    GLint idTexUnit = glGetUniformLocation(shaderProgram, "UISky");
+//    glUniform1i(idTexUnit, 0);
 //
-//
+//    glfwSetKeyCallback(window, key_callback);
 //    glEnable(GL_DEPTH_TEST);
 //    while (!glfwWindowShouldClose(window)) {
-//        // clear color and depth buffer
 //        glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
-//        glUseProgram(shaderProgram);
 //        glBindVertexArray(VAO);
 //        M = glm::rotate(glm::mat4(1.0f), angle, glm::vec3(1.0f, 1.0f, 1.0f));
+//        M = glm::scale(M, glm::vec3(0.2f, 0.2f, 0.2f));
 //        GLint idModelTransform = glGetUniformLocation(shaderProgram, "modelMatrix");
 //        glUniformMatrix4fv(idModelTransform, 1, GL_FALSE, &M[0][0]);
 //
 //        // draw triangles
-//        glDrawArrays(GL_TRIANGLES, 0, 12); //mode,first,count
-//        // update other events like input handling
+//        glDrawArrays(GL_TRIANGLES, 0, 108); //mode,first,count
 //        glfwPollEvents();
-//        // put the stuff we’ve been drawing onto the display
 //        glfwSwapBuffers(window);
 //        angle += 0.01f;
 //    }
 //    glfwDestroyWindow(window);
-//
 //    glfwTerminate();
 //    exit(EXIT_SUCCESS);
 //}

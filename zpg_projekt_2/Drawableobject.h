@@ -41,7 +41,7 @@ public:
 	void setMaterial(Material* material);
 	void setTexture(Texture* texture);
 
-    void Draw();
+    virtual void Draw();
 
 private:
     bool isDynamicRotationEnabled = false;

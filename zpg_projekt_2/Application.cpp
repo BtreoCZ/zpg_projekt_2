@@ -152,7 +152,14 @@ void Application::Init()
 		0.5f, 0.0f, 0.0f,
 		0.0f, 0.0f, 0.0f
 	};
-
+	vector<string> filePaths = {
+	"posx.jpg",
+	"negx.jpg",
+	"posy.jpg",
+	"tnegy.jpg",
+	"posz.jpg",
+	"negz.jpg"
+	};
 
 	//Nastavení kamer
 	camera_forest->SetProjection(60.0f,ratio, 0.1f, 100.0f);
@@ -183,8 +190,8 @@ void Application::Init()
 	Light* light = new Light(glm::vec3(0.0f, 1.0f, 1.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,camera_forest->GetTarget(),2);
 	light->SetIndex(0);
 
-	//Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,glm::vec3(0.0),0);
-	//light_forest->SetIndex(1);
+	Light* light_forest = new Light(glm::vec3(0.0f, 1.0f, 3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f,glm::vec3(0.0),0);
+	light_forest->SetIndex(1);
 
 	//Light* light_forest2 = new Light(glm::vec3(0.0f, 1.0f, -3.0f), glm::vec3(1.0f, 1.0f, 1.0f), glm::vec3(0.385f, 0.647f, 0.812f), 0.5f, 0.3f, glm::vec3(0.0), 0);
 	//light_forest2->SetIndex(2);
@@ -194,7 +201,7 @@ void Application::Init()
 	vector<Light*> lights;
 	lights.push_back(light);
 	camera_forest->Attach(light);
-	//lights.push_back(light_forest);
+	lights.push_back(light_forest);
 	//lights.push_back(light_forest2);
 	vector<Light*> lights_spheres;
 	lights_spheres.push_back(light_spheres);
@@ -202,6 +209,9 @@ void Application::Init()
 	srand(time(NULL));
 	Texture* plainTexture = new Texture;
 	plainTexture->LoadTexture("grass.png");
+
+	Texture* woodenTexture = new Texture;
+	woodenTexture->LoadTexture("test.png");
 	
 	Material* treeMaterial = new Material(0.4f, 0.6f, 0.1f);
 
@@ -210,10 +220,32 @@ void Application::Init()
 	triangle_object->setMaterial(treeMaterial);
 
 	objects_triangle.push_back(triangle_object);
+
+
+	 
+	Texture* skyboxTexture = new Texture;
+	skyboxTexture->LoadCubeMap(filePaths);
+
+	Model* skycubeModel = new Model();
+	skycubeModel->GenerateModelWithoutNormals(skycube, sizeof(skycube));
+
+	ShaderProgram* skyboxShader = new ShaderProgram(GL_TRIANGLES, 0, sizeof(skycube) / sizeof(float) / 3, camera_base, lights_spheres);
+	skyboxShader->AddShaders("skybox_vertex.txt", "skybox_fragment.txt");
+
+	Skybox* skybox = new Skybox(skycubeModel, skyboxShader, treeMaterial);
+	skybox->setTexture(skyboxTexture);
+	skybox->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	skybox->SetScale(glm::vec3(2.0f));
+	//camera_base->Attach(skybox);
+
+
 	light->Notify();
-	Scene* scene_triangle = new Scene(objects_triangle, camera_base);
+
+
+	Scene* scene_triangle = new Scene(objects_triangle, camera_base, skybox);
 	AddScene(scene_triangle);
 	//Vytvoøeni sceny pro stromy a keøe
+
 	Model* tree_model = new Model();
 	tree_model->GenerateModel(tree, sizeof(tree));
 
@@ -255,10 +287,20 @@ void Application::Init()
 	plainObject->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	plainObject->setMaterial(treeMaterial);
 
-	plainObject->Draw();
 
 	objects_forest.push_back(plainObject);
 
+
+
+	////new Skybox(skycubeModel, skyboxShader, treeMaterial);
+	////Skybox* skybox = new Skybox(skycube, sizeof(skycube), GL_TRIANGLES, "vertex.txt", "fragmentTexture.txt", false, camera_forest, lights, skyboxTexture);
+	//DrawableObject* skybox = new DrawableObject(skycubeModel, skyboxShader, treeMaterial);
+	////skybox->setTexture(skyboxTexture);
+	//skybox->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
+	//skybox->SetScale(glm::vec3(5.0f));
+	//skybox->setMaterial(treeMaterial);
+
+	//objects_forest.push_back(skybox);
 
 	light->Notify();
 
@@ -298,6 +340,10 @@ void Application::Init()
 	sphereObject4->setMaterial(plastic);
 
 	objects_spheres.push_back(sphereObject4);
+
+
+
+
 
 
 	light_spheres->Notify();

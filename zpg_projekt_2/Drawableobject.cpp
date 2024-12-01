@@ -36,8 +36,12 @@ DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLe
     this->transformation = Transformation();
 
 	this->texture = texture;
-
+    if(withNormal){
 	modelTexture.GenerateModel(vertices,vertexSize);
+    }
+    else {
+        model.GenerateModelWithoutNormals(vertices, vertexSize);
+    }
 
     this->hasTexture = true;
 
@@ -113,7 +117,6 @@ void DrawableObject::Draw()
 
 	if (hasTexture)
 	{
-
 		shaderProgram->SetIntUniform("textureUnitID", texture->GetTextureID());
 
 		modelTexture.BindVAO();
@@ -121,7 +124,6 @@ void DrawableObject::Draw()
         shaderProgram->Draw();
 
 		shaderProgram->DetachProgram();
-
 		modelTexture.UnbindVAO();
 	}else {
 
