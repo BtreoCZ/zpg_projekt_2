@@ -73,4 +73,5 @@ public:
 	void Update(Subject* subject) override;
 
 	void Draw();
+	void DrawOBJ();
 };

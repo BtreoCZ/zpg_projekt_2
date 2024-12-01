@@ -228,3 +228,8 @@ void ShaderProgram::Draw()
 {
 	glDrawArrays(this->mode, this->first, this->count);
 }
+
+void ShaderProgram::DrawOBJ() 
+{
+	glDrawElements(GL_TRIANGLES, this->count, GL_UNSIGNED_INT, NULL);
+}

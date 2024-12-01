@@ -26,6 +26,7 @@ void Scene::Init(std::vector<DrawableObject*> drawableObjects,Camera *camera)
 
 void Scene::Render()
 {
+	if (skybox != nullptr)
     skybox->Draw();
 
     for (auto& object : objects)

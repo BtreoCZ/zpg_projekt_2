@@ -78,6 +78,12 @@
     <ClCompile Include="Skybox.cpp">
       <Filter>Source Files</Filter>
     </ClCompile>
+    <ClCompile Include="ModelOBJ.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
+    <ClCompile Include="DrawableObjectOBJ.cpp">
+      <Filter>Source Files</Filter>
+    </ClCompile>
   </ItemGroup>
   <ItemGroup>
     <ClInclude Include="Model.h">
@@ -164,6 +170,12 @@
     <ClInclude Include="Skybox.h">
       <Filter>Header Files</Filter>
     </ClInclude>
+    <ClInclude Include="ModelOBJ.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
+    <ClInclude Include="DrawableObjectOBJ.h">
+      <Filter>Header Files</Filter>
+    </ClInclude>
   </ItemGroup>
   <ItemGroup>
     <Text Include="vertex.txt">
@@ -200,6 +212,9 @@
       <Filter>Source Files</Filter>
     </Text>
     <Text Include="skybox_fragment.txt">
+      <Filter>Source Files</Filter>
+    </Text>
+    <Text Include="vertex_obj.txt">
       <Filter>Source Files</Filter>
     </Text>
   </ItemGroup>

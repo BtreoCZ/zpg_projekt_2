@@ -67,8 +67,6 @@ void Texture::LoadCubeMap(vector<string>& filePaths)
         exit(EXIT_FAILURE);
     }
 
-
-
 	glBindTexture(GL_TEXTURE_CUBE_MAP, this->image);
     glEnable(GL_TEXTURE_CUBE_MAP_SEAMLESS);
 

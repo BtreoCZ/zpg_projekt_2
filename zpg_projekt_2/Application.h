@@ -12,6 +12,8 @@
 #include <glm/gtc/matrix_transform.hpp> // glm::translate, glm::rotate, glm::scale, glm::perspective
 #include <glm/gtc/type_ptr.hpp> // glm::value_ptr
 
+
+
 #include <SOIL.h>
 #include <vector>
 #include "ShaderProgram.h"
@@ -28,6 +30,8 @@
 #include "Controller.h"
 #include "Skybox.h"
 #include "skycube.h"
+#include "DrawableObjectOBJ.h"
+#include "ModelOBJ.h"
 using namespace std;
 
 class Application

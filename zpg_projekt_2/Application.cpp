@@ -229,20 +229,30 @@ void Application::Init()
 	Model* skycubeModel = new Model();
 	skycubeModel->GenerateModelWithoutNormals(skycube, sizeof(skycube));
 
-	ShaderProgram* skyboxShader = new ShaderProgram(GL_TRIANGLES, 0, sizeof(skycube) / sizeof(float) / 3, camera_base, lights_spheres);
+	ShaderProgram* skyboxShader = new ShaderProgram(GL_TRIANGLES, 0, sizeof(skycube) / sizeof(float) / 3, camera_forest, lights_spheres);
 	skyboxShader->AddShaders("skybox_vertex.txt", "skybox_fragment.txt");
 
 	Skybox* skybox = new Skybox(skycubeModel, skyboxShader, treeMaterial);
 	skybox->setTexture(skyboxTexture);
 	skybox->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	skybox->SetScale(glm::vec3(2.0f));
-	//camera_base->Attach(skybox);
+
+
+	ModelOBJ* login = new ModelOBJ;
+	login->GenerateModelOBJ("login_smooth.obj");
+
+	ShaderProgram* loginShader = new ShaderProgram(GL_TRIANGLES, 0, login->GetIndicesCount(), camera_forest, lights_spheres);
+	loginShader->AddShaders("vertex.txt", "phong_lights.txt");
+
+	DrawableObjectOBJ* loginObject = new DrawableObjectOBJ(login, loginShader, treeMaterial);
+
+	loginObject->setTexture(plainTexture);
 
 
 	light->Notify();
 
 
-	Scene* scene_triangle = new Scene(objects_triangle, camera_base, skybox);
+	Scene* scene_triangle = new Scene(objects_triangle, camera_base);
 	AddScene(scene_triangle);
 	//Vytvoøeni sceny pro stromy a keøe
 
@@ -287,10 +297,27 @@ void Application::Init()
 	plainObject->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
 	plainObject->setMaterial(treeMaterial);
 
+	Texture* houseTexture = new Texture();
+	houseTexture->LoadTexture("house.png");
+
+
+	ModelOBJ* house = new ModelOBJ();
+	house->GenerateModelOBJ("house.obj");
+
+	ShaderProgram* houseShader = new ShaderProgram(GL_TRIANGLES, 0, house->GetIndicesCount(), camera_forest, lights);
+	houseShader->AddShaders("vertex.txt", "fragmentTexture.txt");
+
+	DrawableObjectOBJ* houseObject = new DrawableObjectOBJ(house, houseShader, treeMaterial);
+	houseObject->setTexture(houseTexture);
+	houseObject->SetPosition(glm::vec3(-4.0f, 0.0f, -5.0f));
+	houseObject->SetScale(glm::vec3(0.5f));
+
+
+	objects_forest.push_back(houseObject);
 
 	objects_forest.push_back(plainObject);
 
-
+	objects_forest.push_back(loginObject);
 
 	////new Skybox(skycubeModel, skyboxShader, treeMaterial);
 	////Skybox* skybox = new Skybox(skycube, sizeof(skycube), GL_TRIANGLES, "vertex.txt", "fragmentTexture.txt", false, camera_forest, lights, skyboxTexture);
@@ -304,7 +331,7 @@ void Application::Init()
 
 	light->Notify();
 
-	Scene *scene_forest= new Scene(objects_forest, camera_forest);
+	Scene *scene_forest= new Scene(objects_forest, camera_forest,skybox);
 	AddScene(scene_forest);
 
 	Material* metal = new Material(0.1, 0.3, 1.0);
