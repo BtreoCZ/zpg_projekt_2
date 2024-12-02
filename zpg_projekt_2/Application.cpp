@@ -4,7 +4,7 @@
 float deltaTime2 = 0;
 float lastFrame2 = 0;
 int Texture::textureCount = 0;
-
+int DrawableObject::idCounter = 0;
 void Application::Init()
 {
 	vector<DrawableObject*> objects_forest;
@@ -57,7 +57,7 @@ void Application::Init()
 	glViewport(0, 0, width, height);
 
 
-	glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+	
 
 	//// Sets the key callback
 	glfwSetKeyCallback(this->window, Controller::key_callback);
@@ -471,7 +471,7 @@ void Application::Run()
 
 	while (!glfwWindowShouldClose(this->window))
 	{
-		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT);
+		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
 		for (auto& object : scenes[currentSceneIndex]->objects) {
 			object->UpdateRotation(deltaTime2);

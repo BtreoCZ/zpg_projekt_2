@@ -29,6 +29,7 @@ public:
 
     bool hasNormal;
 	bool hasTexture = false;
+	static int idCounter;
 
     DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal,Camera *camera,vector<Light*> lights);
     DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal, Camera* camera, vector<Light*> lights,Texture* texture);
@@ -40,10 +41,12 @@ public:
     void UpdateRotation(float deltaTime);
 	void setMaterial(Material* material);
 	void setTexture(Texture* texture);
+	int getID();
 
     virtual void Draw();
 
 private:
+    int id;
     bool isDynamicRotationEnabled = false;
     float rotationSpeed = 0.0f;       
     glm::vec3 rotationAxis;           

@@ -20,6 +20,7 @@ DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLe
         model.GenerateModelWithoutNormals(vertices, vertexSize);
 
     shaderProgram->AddShaders(vertexShader, fragmentShader);
+	id = idCounter++;
 }
 
 DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLenum drawMode, const char* vertexShader, const char* fragmentShader, bool withNormal, Camera* camera, vector<Light*> lights, Texture* texture)
@@ -46,11 +47,13 @@ DrawableObject::DrawableObject(const float* vertices, GLsizeiptr vertexSize, GLe
     this->hasTexture = true;
 
     shaderProgram->AddShaders(vertexShader, fragmentShader);
+	id = idCounter++;
 }
 
 DrawableObject::DrawableObject(Model* model, ShaderProgram* shaderProgram, Material* material) : shaderProgram(shaderProgram), model(*model), material(material)
 {
     this->transformation = Transformation();
+	id = idCounter++;
 }
 
 
@@ -96,6 +99,11 @@ void DrawableObject::setTexture(Texture* texture)
 {
 	this->texture = texture;
 	this->hasTexture = true;
+}
+
+int DrawableObject::getID()
+{
+    return id;
 }
 
 

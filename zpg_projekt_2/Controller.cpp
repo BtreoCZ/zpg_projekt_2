@@ -1,5 +1,8 @@
 #include "Controller.h"
 
+
+int cx, cy;
+bool isCursorEnabled = false;
 void Controller::error_callback(int error, const char* description)
 {
 	fputs(description, stderr);
@@ -82,6 +85,10 @@ void Controller::window_size_callback(GLFWwindow* window, int width, int height)
 
 void Controller::cursor_callback(GLFWwindow* window, double x, double y)
 {
+	if (isCursorEnabled == false)
+		return;
+	cx = x;
+	cy = y;
 	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
 
 	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
@@ -103,11 +110,40 @@ void Controller::cursor_callback(GLFWwindow* window, double x, double y)
 
 void Controller::button_callback(GLFWwindow* window, int button, int action, int mode)
 {
-
+	Application* app = (Application*)glfwGetWindowUserPointer(window);
 	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_PRESS)
 	{
-		Application* app = (Application*)glfwGetWindowUserPointer(window);
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
+		cursor_callback(window, cx, cy);
+		isCursorEnabled = true;
+		
+	}
+
+	if (button == GLFW_MOUSE_BUTTON_RIGHT && action == GLFW_RELEASE)
+	{
+		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_NORMAL);
+		isCursorEnabled = false;
+	}
+	if (button == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
+	{
 		app->SwitchScene();
 	}
+	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
+
+	GLbyte color[4];
+	GLfloat depth;
+	GLuint index;
+
+	GLint x = (GLint)cx;
+	GLint y = (GLint)cy;
+
+	//int newy = camera->getResolution().y – y;
+	int newy = camera->GetPosition().y - y;
+	glReadPixels(x, newy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
+	glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
+	glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
+
+	printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index % u\n", x, y, color[0], color[1], color[2], color[3], depth, index);
+
 
 }

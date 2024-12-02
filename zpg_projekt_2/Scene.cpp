@@ -26,11 +26,14 @@ void Scene::Init(std::vector<DrawableObject*> drawableObjects,Camera *camera)
 
 void Scene::Render()
 {
+    glEnable(GL_STENCIL_TEST);
+    glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
 	if (skybox != nullptr)
     skybox->Draw();
 
     for (auto& object : objects)
     {
+        glStencilFunc(GL_ALWAYS, object->getID(), 0xFF);
         object->Draw();
     }
 }
