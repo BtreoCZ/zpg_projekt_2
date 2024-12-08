@@ -10,6 +10,14 @@ Skybox::Skybox(Model* model, ShaderProgram* shaderProgram, Material* material) :
 {
 
 }
+void Skybox::SetFollowCamera(bool followCamera)
+{
+	this->followCamera = followCamera;
+}
+bool Skybox::GetFollowCamera()
+{
+    return this->followCamera;
+}
 void Skybox::Update(Subject* subject)
 {
 	Camera* camera = (Camera*)subject;
@@ -19,6 +27,7 @@ void Skybox::Update(Subject* subject)
 
 void Skybox::Draw()
 {
+    if(followCamera)
     glDisable(GL_DEPTH_TEST);
 
     shaderProgram->UseProgram();
@@ -32,6 +41,8 @@ void Skybox::Draw()
     shaderProgram->SetFloatUniform("material.rd", this->material->GetDiffuseCoefficient());
 
     shaderProgram->SetFloatUniform("material.rs", this->material->GetSpecularCoefficient());
+
+	shaderProgram->SetIntUniform("followCamera", followCamera);
 
     if (hasTexture)
     {

@@ -74,6 +74,8 @@ public:
 
 	void Update(Subject* subject) override;
 
+	vector<Light*> getLights();
+
 	void Draw();
 	void DrawOBJ();
 };

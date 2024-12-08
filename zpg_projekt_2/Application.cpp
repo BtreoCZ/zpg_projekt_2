@@ -253,6 +253,7 @@ void Application::Init()
 
 
 	Scene* scene_triangle = new Scene(objects_triangle, camera_base);
+	scene_triangle->AddLights(lights_spheres);
 	AddScene(scene_triangle);
 	//Vytvoøeni sceny pro stromy a keøe
 
@@ -334,6 +335,7 @@ void Application::Init()
 	light->Notify();
 
 	Scene *scene_forest= new Scene(objects_forest, camera_forest,skybox);
+	scene_forest->AddLights(lights);
 	AddScene(scene_forest);
 
 	Material* metal = new Material(0.1, 0.3, 1.0);

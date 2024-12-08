@@ -235,6 +235,11 @@ void ShaderProgram::Update(Subject* subject)
 	this->DetachProgram();
 }
 
+vector<Light*> ShaderProgram::getLights()
+{
+	return this->lights;
+}
+
 void ShaderProgram::Draw()
 {
 	glDrawArrays(this->mode, this->first, this->count);

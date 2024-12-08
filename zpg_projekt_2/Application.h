@@ -20,7 +20,6 @@
 #include "Model.h"
 #include "bushes.h"
 #include "sphere.h"
-#include "tree.h"
 #include <random>
 #include "Scene.h"
 #include "Camera.h"
@@ -33,6 +32,7 @@
 #include "DrawableObjectOBJ.h"
 #include "ModelOBJ.h"
 #include "DynamicRotate.h"
+#pragma once
 using namespace std;
 
 class Application

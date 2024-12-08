@@ -13,31 +13,24 @@ void Controller::key_callback(GLFWwindow* window, int key, int scancode, int act
 {
 	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
 	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
-	if (action == GLFW_PRESS || action == GLFW_REPEAT)
+
+	if (key == GLFW_KEY_SPACE && action == GLFW_PRESS)
 	{
-		if (key == GLFW_KEY_LEFT) {
-			((Application*)glfwGetWindowUserPointer(window))->MoveObject(0);
-		}
-		else if (key == GLFW_KEY_RIGHT) {
-			((Application*)glfwGetWindowUserPointer(window))->MoveObject(1);
-		}
-		else if (key == GLFW_KEY_UP) {
-			((Application*)glfwGetWindowUserPointer(window))->MoveObject(2);
-		}
-		else if (key == GLFW_KEY_DOWN) {
-			((Application*)glfwGetWindowUserPointer(window))->MoveObject(3);
-		}
-		else if (key == GLFW_KEY_R) {
-			((Application*)glfwGetWindowUserPointer(window))->RotateObject(0);
-		}
-		else if (key == GLFW_KEY_T) {
-			((Application*)glfwGetWindowUserPointer(window))->RotateObject(1);
-		}
-		else if (key == GLFW_KEY_SPACE) {
-			((Application*)glfwGetWindowUserPointer(window))->SwitchScene();
-		}
+		app->SwitchScene();
 	}
 
+	if (key == GLFW_KEY_F1 && action == GLFW_PRESS)
+	{
+		Skybox* skybox =  app->scenes[app->currentSceneIndex]->GetSkybox();
+
+		if (skybox != nullptr)
+			skybox->SetFollowCamera(!skybox->GetFollowCamera());
+		if (skybox->GetFollowCamera() == false)
+			skybox->SetPosition(camera->GetPosition());
+		else
+			skybox->transformation = Transformation();
+			
+	}
 
 	if (key == GLFW_KEY_ESCAPE && action == GLFW_PRESS)
 		glfwSetWindowShouldClose(window, GL_TRUE);
@@ -141,6 +134,7 @@ void Controller::button_callback(GLFWwindow* window, int button, int action, int
 	{
 		app->SwitchScene();
 	}
+
 	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
 	int width, height;
 	glfwGetWindowSize(window, &width, &height);
@@ -158,6 +152,17 @@ void Controller::button_callback(GLFWwindow* window, int button, int action, int
 	glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
 
 	printf("Clicked on pixel %d, %d, color %02hhx%02hhx%02hhx%02hhx, depth %f, stencil index % u\n", x, y, color[0], color[1], color[2], color[3], depth, index);
+
+	glm::vec3 screenX = glm::vec3(x, newy, depth);
+	glm::mat4 view = camera->GetViewMatrix();
+	glm::mat4 projection = camera->GetProjectionMatrix();
+	glm::vec4 viewPort = glm::vec4(0, 0, width, height);
+	glm::vec3 pos = glm::unProject(screenX, view, projection, viewPort);
+
+	app->scenes[app->currentSceneIndex]->CreateTree(pos);
+
+
+	printf("unProject [%f,%f,%f]\n", pos.x, pos.y, pos.z);
 
 
 }
