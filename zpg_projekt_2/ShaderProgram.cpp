@@ -179,6 +179,17 @@ void ShaderProgram::SetIntUniform(const char* uniformName, int value)
 	glUniform1i(idUniform, value);
 }
 
+void ShaderProgram::SetBoolUniform(const char* uniformName, bool value)
+{
+	GLint idUniform = glGetUniformLocation(this->shader_id, uniformName);
+
+	if (idUniform == -1) {
+		return;
+	}
+
+	glUniform1i(idUniform, value);
+}
+
 void ShaderProgram::UseProgram()
 {
 

@@ -8,5 +8,6 @@ class Scale : public TransformationComponent
 	public:
 		Scale(glm::vec3 scale);
 		glm::mat4 Apply(glm::mat4 model);
+		glm::mat4 GetMatrix();
 };
 

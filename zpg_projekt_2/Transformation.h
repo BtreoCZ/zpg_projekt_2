@@ -9,7 +9,6 @@ class Transformation
 {
 private:
     vector<TransformationComponent*> transformations;
-    glm::mat4 modelMatrix = glm::mat4(1.0f);
 
 public:
     Transformation();

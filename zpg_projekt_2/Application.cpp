@@ -201,7 +201,7 @@ void Application::Init()
 	vector<Light*> lights;
 	lights.push_back(light);
 	camera_forest->Attach(light);
-	lights.push_back(light_forest);
+	//lights.push_back(light_forest);
 	//lights.push_back(light_forest2);
 	vector<Light*> lights_spheres;
 	lights_spheres.push_back(light_spheres);
@@ -216,7 +216,7 @@ void Application::Init()
 	Material* treeMaterial = new Material(0.4f, 0.6f, 0.1f);
 
 	////Vytvoøení sceny pro trojuhelnik
-	DrawableObject* triangle_object = new DrawableObject(plain_texture, sizeof(plain_texture), GL_TRIANGLES, "vertex.txt", "fragmentTexture.txt", true, camera_base, lights_spheres, plainTexture);
+	DrawableObject* triangle_object = new DrawableObject(plain_texture, sizeof(plain_texture), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_base, lights_spheres, plainTexture);
 	triangle_object->setMaterial(treeMaterial);
 
 	objects_triangle.push_back(triangle_object);
@@ -241,7 +241,7 @@ void Application::Init()
 	ModelOBJ* login = new ModelOBJ;
 	login->GenerateModelOBJ("login_smooth.obj");
 
-	ShaderProgram* loginShader = new ShaderProgram(GL_TRIANGLES, 0, login->GetIndicesCount(), camera_forest, lights_spheres);
+	ShaderProgram* loginShader = new ShaderProgram(GL_TRIANGLES, 0, login->GetIndicesCount(), camera_forest, lights);
 	loginShader->AddShaders("vertex.txt", "phong_lights.txt");
 
 	DrawableObjectOBJ* loginObject = new DrawableObjectOBJ(login, loginShader, treeMaterial);
@@ -271,11 +271,13 @@ void Application::Init()
 
 	for (int i = 0; i < 50; i++) {
 		DrawableObject* treeObject = new DrawableObject(tree_model,shader_tree, treeMaterial);
-		if(i%2){
-		treeObject->EnableDynamicRotation(20.0f, glm::vec3(0.0f, 1.0f, 0.0f));
-		}
+		
 		treeObject->SetScale(glm::vec3(rand() % 100 / 1000.0 + 0.05f));
 		treeObject->SetPosition(glm::vec3(rand() % 20 - 8, 0.0f, rand()%50));
+
+		if (i % 2) {
+			treeObject->transformation.AddComponent(new DynamicRotate(glm::vec3(0.0f, 1.0f, 0.0f), 1.5f));
+		}
 
 		float randomAngleY = rand() % 45;
 		float randomAngleX = rand() % 45;
@@ -291,7 +293,7 @@ void Application::Init()
 	}
 
 	
-	DrawableObject* plainObject= new DrawableObject(plain_texture, sizeof(plain_texture), GL_TRIANGLES, "vertex.txt", "fragmentTexture.txt", true, camera_forest, lights,plainTexture);
+	DrawableObject* plainObject= new DrawableObject(plain_texture, sizeof(plain_texture), GL_TRIANGLES, "vertex.txt", "phong_lights.txt", true, camera_forest, lights,plainTexture);
 
 	plainObject->SetScale(glm::vec3(10.0f));
 	plainObject->SetPosition(glm::vec3(0.0f, 0.0f, 0.0f));
@@ -305,7 +307,7 @@ void Application::Init()
 	house->GenerateModelOBJ("house.obj");
 
 	ShaderProgram* houseShader = new ShaderProgram(GL_TRIANGLES, 0, house->GetIndicesCount(), camera_forest, lights);
-	houseShader->AddShaders("vertex.txt", "fragmentTexture.txt");
+	houseShader->AddShaders("vertex.txt", "phong_lights.txt");
 
 	DrawableObjectOBJ* houseObject = new DrawableObjectOBJ(house, houseShader, treeMaterial);
 	houseObject->setTexture(houseTexture);
@@ -473,9 +475,6 @@ void Application::Run()
 	{
 		glClear(GL_COLOR_BUFFER_BIT | GL_DEPTH_BUFFER_BIT | GL_STENCIL_BUFFER_BIT);
 
-		for (auto& object : scenes[currentSceneIndex]->objects) {
-			object->UpdateRotation(deltaTime2);
-		}
 
 		scenes[currentSceneIndex]->Render();
 

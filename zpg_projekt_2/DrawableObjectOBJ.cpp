@@ -22,6 +22,8 @@ void DrawableObjectOBJ::Draw()
     {
         shaderProgram->SetIntUniform("textureUnitID", texture->GetTextureID());
 
+        shaderProgram->SetIntUniform("hasTexture", 1);
+
         model.BindVAO();
 
         shaderProgram->DrawOBJ();

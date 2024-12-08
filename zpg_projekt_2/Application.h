@@ -32,6 +32,7 @@
 #include "skycube.h"
 #include "DrawableObjectOBJ.h"
 #include "ModelOBJ.h"
+#include "DynamicRotate.h"
 using namespace std;
 
 class Application

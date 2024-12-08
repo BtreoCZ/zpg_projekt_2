@@ -28,8 +28,10 @@ void Scene::Render()
 {
     glEnable(GL_STENCIL_TEST);
     glStencilOp(GL_KEEP, GL_KEEP, GL_REPLACE);
-	if (skybox != nullptr)
-    skybox->Draw();
+	if (skybox != nullptr){
+        glStencilFunc(GL_ALWAYS, skybox->getID(), 0xFF);
+        skybox->Draw();
+    }
 
     for (auto& object : objects)
     {

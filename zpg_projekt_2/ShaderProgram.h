@@ -66,6 +66,8 @@ public:
 
 	void SetIntUniform(const char* uniformName, int value);
 
+	void SetBoolUniform(const char* uniformName, bool value);
+
 	void UseProgram();
 
 	void DetachProgram();

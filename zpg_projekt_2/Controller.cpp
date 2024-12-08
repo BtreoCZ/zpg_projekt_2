@@ -2,6 +2,7 @@
 
 
 int cx, cy;
+bool firstMouse = true;
 bool isCursorEnabled = false;
 void Controller::error_callback(int error, const char* description)
 {
@@ -85,15 +86,26 @@ void Controller::window_size_callback(GLFWwindow* window, int width, int height)
 
 void Controller::cursor_callback(GLFWwindow* window, double x, double y)
 {
-	if (isCursorEnabled == false)
-		return;
 	cx = x;
 	cy = y;
+
+	if (isCursorEnabled == false)
+		return;
+	static double lastX = 400, lastY = 300;
+
+	if (firstMouse) {
+		lastX = x;
+		lastY = y;
+
+		firstMouse = false;
+	}
+
+
 	Application* app = static_cast<Application*>(glfwGetWindowUserPointer(window));
 
 	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
 
-	static double lastX = 400, lastY = 300;
+	
 
 	double offsetX = x - lastX;
 	double offsetY = lastY - y;
@@ -116,6 +128,7 @@ void Controller::button_callback(GLFWwindow* window, int button, int action, int
 		glfwSetInputMode(window, GLFW_CURSOR, GLFW_CURSOR_DISABLED);
 		cursor_callback(window, cx, cy);
 		isCursorEnabled = true;
+		firstMouse = true;
 		
 	}
 
@@ -129,7 +142,8 @@ void Controller::button_callback(GLFWwindow* window, int button, int action, int
 		app->SwitchScene();
 	}
 	Camera* camera = app->scenes[app->currentSceneIndex]->GetCamera();
-
+	int width, height;
+	glfwGetWindowSize(window, &width, &height);
 	GLbyte color[4];
 	GLfloat depth;
 	GLuint index;
@@ -138,7 +152,7 @@ void Controller::button_callback(GLFWwindow* window, int button, int action, int
 	GLint y = (GLint)cy;
 
 	//int newy = camera->getResolution().y – y;
-	int newy = camera->GetPosition().y - y;
+	int newy = height - y;
 	glReadPixels(x, newy, 1, 1, GL_RGBA, GL_UNSIGNED_BYTE, color);
 	glReadPixels(x, newy, 1, 1, GL_DEPTH_COMPONENT, GL_FLOAT, &depth);
 	glReadPixels(x, newy, 1, 1, GL_STENCIL_INDEX, GL_UNSIGNED_INT, &index);
